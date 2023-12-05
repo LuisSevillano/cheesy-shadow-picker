@@ -1,5 +1,4 @@
 <script>
-	import { colors, resolutions } from '$lib/config';
 	import Shadows from '$lib/Shadows.svelte';
 </script>
 
@@ -8,7 +7,7 @@
 </header>
 <main>
 	<p>
-		I have been collecting CSS's 'text-shadow' from media like The New York Times, Washington Post,
+		I have been collecting CSS <i>text-shadow's</i> from media like The New York Times, Washington Post,
 		Reuters Graphics, Propublica, Bloomberg or El País.
 	</p>
 	<p>
