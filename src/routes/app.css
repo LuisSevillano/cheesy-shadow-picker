@@ -16,17 +16,34 @@ main {
 
 header {
 	padding: 1rem;
-	background: lightskyblue;
+	background: #f39008;
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-between;
+	position: relative;
 }
-
 header h1 {
 	display: block;
 	width: 100%;
 	max-width: 50rem;
-	margin: 2rem auto;
+	margin: 1rem auto;
+}
+header::after {
+	content: '';
+	background-image: url(/cheese.svg);
+	background-repeat: no-repeat;
+	overflow: visible;
+	width: 250px;
+	height: 100px;
+	position: absolute;
+	right: 0;
+	top: 133px;
+	z-index: -1;
+}
+@media (min-width: 380px) {
+	header h1 {
+		margin: 2rem auto;
+	}
 }
 
 ul {
