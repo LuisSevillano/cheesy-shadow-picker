@@ -4,6 +4,8 @@
 	export let data;
 	export let text;
 	export let mainTextColor;
+	export let leftGradColor;
+	export let rightGradColor;
 
 	let shadow;
 	let customColor;
@@ -24,13 +26,9 @@
 			g = (255 - parseInt(hex.slice(2, 4), 16)).toString(16),
 			b = (255 - parseInt(hex.slice(4, 6), 16)).toString(16);
 		// pad each with zeros and return
-		return '#' + padZero(r) + padZero(g) + padZero(b);
-	}
-
-	function padZero(str, len) {
-		len = len || 2;
-		var zeros = new Array(len).join('0');
-		return (zeros + str).slice(-len);
+		return (
+			'#' + String(r).padStart(2, '0') + String(g).padStart(2, '0') + String(b).padStart(2, '0')
+		);
 	}
 
 	function extractHexFromString(str) {
@@ -49,8 +47,33 @@
 			customColor = shadowColor;
 			const regex = new RegExp(shadowColor, 'gi');
 			shadow = data.replace(regex, invert);
-            console.log({customColor,
-shadow});
+			console.log({ customColor, shadow });
+		}
+	}
+
+	async function copyToClipboard(textToCopy) {
+		// Navigator clipboard api needs a secure context (https)
+		if (navigator.clipboard && window.isSecureContext) {
+			await navigator.clipboard.writeText(textToCopy);
+		} else {
+			// Use the 'out of viewport hidden text area' trick
+			const textArea = document.createElement('textarea');
+			textArea.value = textToCopy;
+
+			// Move textarea out of the viewport so it's not visible
+			textArea.style.position = 'absolute';
+			textArea.style.left = '-999999px';
+
+			document.body.prepend(textArea);
+			textArea.select();
+
+			try {
+				document.execCommand('copy');
+			} catch (error) {
+				console.error(error);
+			} finally {
+				textArea.remove();
+			}
 		}
 	}
 </script>
@@ -69,8 +92,9 @@ shadow});
 	</div>
 	<div
 		class="shadow-block"
+		style="background-image: linear-gradient(to right, {leftGradColor}, {rightGradColor});"
 		title={data.source}
-		on:click={() => navigator.clipboard.writeText(`text-shadow: ${data.shadow};`)}
+		on:click={() => copyToClipboard(`text-shadow: ${data.shadow}`)}
 	>
 		<p style="text-shadow:{shadow || data.shadow};color:{customColor || mainTextColor}">
 			{text}"
@@ -87,7 +111,6 @@ shadow});
 		padding: 0.5rem;
 		margin: 5px 0;
 		border-radius: 2px;
-		display: inline-block;
 		box-shadow: 0 1px 2px rgb(0 0 0 / 33%);
 	}
 	.shadow-block {
@@ -97,7 +120,6 @@ shadow});
 		cursor: pointer;
 		background-image: linear-gradient(to right, #000000, #ffffff);
 		padding: 0.3rem 0.5rem;
-		display: inline-block;
 		border-radius: 2px;
 		margin-top: 4px;
 	}
