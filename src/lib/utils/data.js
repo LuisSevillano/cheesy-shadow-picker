@@ -12,7 +12,7 @@ const shadows = [
 		shadow:
 			'1px 1px 1px rgb(0 0 0 / 90%), 1px -1px 1px rgb(0 0 0 / 90%), -1px 1px 1px rgb(0 0 0 / 90%), -1px -1px 1px rgb(0 0 0 / 90%);',
 		id: 1
-	}
+	},
 	{
 		source: 'https://www.nytimes.com/interactive/2021/12/11/us/tornado-maps-damage.html ',
 		shadow: '0px 0px 3px #000000, 0px 0px 3px #000000, 0px 0px 3px #000000;',
