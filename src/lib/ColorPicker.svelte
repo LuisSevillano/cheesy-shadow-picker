@@ -1,12 +1,12 @@
 <script>
 	export let color = '#000000';
 	export let label = '';
+	export let disabled = false;
 </script>
 
-<label>{label}: <input style="height:20px;width:30px;" type="color" bind:value={color} /></label>
-
-<!-- markup (zero or more items) goes here -->
-
+<label {disabled}
+	>{label}:
+	<input on:input style="height:20px;width:30px;" type="color" bind:value={color} {disabled}/></label
+>
 <style>
-	/* your styles go here */
 </style>
