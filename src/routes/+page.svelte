@@ -45,6 +45,7 @@
 		width: 100%;
 		max-width: 50rem;
 		margin: 0 auto;
+		text-shadow: 0px 0px 1px #ffffff, 0px 0px 2px #ffffff, 0px 0px 3px #ffffff, 0px 0px 4px #ffffff;
 	}
 	h3 {
 		font-weight: lighter;
