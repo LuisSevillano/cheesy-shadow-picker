@@ -4,3 +4,8 @@ export const siteDescription =
 export const siteURL = '';
 
 export const siteImage = '';
+
+export const mainTextColorDef = '#ffffff';
+export const leftGradColorDef = '#000000';
+export const rightGradColorDef = '#ffffff';
+export const mainShadowColorDef = '#000000';
