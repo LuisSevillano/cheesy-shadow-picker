@@ -1,5 +1,4 @@
 <script>
-	import { onDestroy, onMount } from 'svelte';
 	import utils from '$lib/utils/utils';
 	const { copyToClipboard } = utils;
 	export let shadow;
@@ -9,35 +8,20 @@
 	export let mainTextColor;
 	export let leftGradColor;
 	export let rightGradColor;
-	$: style=`text-shadow: ${shadow}color: ${mainTextColor}`;
-	console.log(style);
-
-
-
-	// onDestroy(() => {
-	// 	console.log('destroyed', { shadow });
-
-	// });
-	// onMount(() => {
-	// 	customShadow = shadow;
-	// 	console.log('onMount', {customShadow});
-	// });
+	$: style = `text-shadow: ${shadow}color: ${mainTextColor}`;
 </script>
 
-<div class="shadow-line" id={'shadow' + id} >
+<div class="shadow-line">
 	<div class="form-block">
 		<a href={source}>Source</a>
 	</div>
-	<!-- svelte-ignore a11y-click-events-have-key-events -->
-	<!-- svelte-ignore a11y-no-static-element-interactions -->
 	<div
 		class="shadow-block"
 		style="background-image: linear-gradient(to right, {leftGradColor}, {rightGradColor});"
 		title={source}
 		on:click={() => copyToClipboard(`text-shadow: ${shadow}`)}
 	>
-		<p>{shadow}</p>
-		<p style={style}>
+		<p {style}>
 			{text}
 		</p>
 	</div>
