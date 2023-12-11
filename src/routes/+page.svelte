@@ -7,12 +7,12 @@
 	<h3>A collection of authentic and delightful CSS shadows to use in your maps or web graphics.</h3>
 </header>
 <main>
-
-	<p>This shadows have been collected from media like The New York Times, Washington Post,
-		Reuters Graphics, Propublica, Bloomberg or El País.
-		Some of them have been slightly modified to fit the default black/white scheme. This feature is
-		especially useful in combination with <a href="http://ai2html.org/">ai2html</a> or for highlighting
-		text on any kind of graphic, map or photo.
+	<p>
+		This shadows have been collected from media like The New York Times, Washington Post, Reuters
+		Graphics, Propublica, Bloomberg or El País. Some of them have been slightly modified to fit the
+		default black/white scheme. This feature is especially useful in combination with <a
+			href="http://ai2html.org/">ai2html</a
+		> or for highlighting text on any kind of graphic, map or photo.
 	</p>
 	<p>
 		The shadows are shown below in a list where you can change text color or shadow color, the
@@ -36,7 +36,6 @@
 	}
 	@media (min-width: 830px) {
 		header {
-
 			width: auto;
 		}
 	}
