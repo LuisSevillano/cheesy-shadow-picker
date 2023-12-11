@@ -2,12 +2,19 @@
 	import ShadowBlock from '$lib/ShadowBlock.svelte';
 	import shadows from '$lib/utils/stores';
 	import { cheeses } from '$lib/utils/data';
+	import {
+		mainTextColorDef,
+		leftGradColorDef,
+		rightGradColorDef,
+		mainShadowColorDef
+	} from '$lib/config';
+
 	import Filters from './Filters.svelte';
 
-	let mainTextColor = '#ffffff';
-	let leftGradColor = '#000000';
-	let rightGradColor = '#ffffff';
-	let mainShadowColor = '#000000';
+	let mainTextColor = mainTextColorDef;
+	let leftGradColor = leftGradColorDef;
+	let rightGradColor = rightGradColorDef;
+	let mainShadowColor = mainShadowColorDef;
 	let invert = false;
 </script>
 
@@ -19,8 +26,6 @@
 	bind:rightGradColor
 />
 
-{#key $shadows}
-{/key}
 {#each $shadows as { shadow, source, id }, index (id)}
 	<ShadowBlock
 		{id}
