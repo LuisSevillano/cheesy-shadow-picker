@@ -4,27 +4,62 @@
 
 <header>
 	<h1>Chessie shadow picker</h1>
+	<h3>A collection of authentic and delightful CSS shadows to use in your maps or web graphics.</h3>
 </header>
 <main>
-	<p>
-		I have been collecting CSS <i>text-shadow's</i> from media like The New York Times, Washington Post,
+
+	<p>This shadows have been collected from media like The New York Times, Washington Post,
 		Reuters Graphics, Propublica, Bloomberg or El País.
+		Some of them have been slightly modified to fit the default black/white scheme. This feature is
+		especially useful in combination with <a href="http://ai2html.org/">ai2html</a> or for highlighting
+		text on any kind of graphic, map or photo.
 	</p>
 	<p>
-		The items are shown below in a list where you can change the text color or background among
-		other options.
+		The shadows are shown below in a list where you can change text color or shadow color, the
+		background or even invert that configuration.
 	</p>
 
 	<Shadows />
 </main>
 
 <style>
-	li {
-		border-radius: 2px;
-		padding: 0.25rem 0.5rem;
+	header {
+		padding: 1rem 0;
 		display: flex;
-		align-items: center;
-		justify-content: center;
-		white-space: nowrap;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		position: relative;
+		border-bottom: 1px solid gray;
+		max-width: 50rem;
+		margin: 0 auto;
+		width: 90%;
+	}
+	@media (min-width: 830px) {
+		header {
+
+			width: auto;
+		}
+	}
+	h1,
+	h3 {
+		display: block;
+		width: 100%;
+		max-width: 50rem;
+		margin: 0 auto;
+	}
+	h3 {
+		font-weight: lighter;
+	}
+	header::before {
+		content: '';
+		background-image: url(/cheese.svg);
+		background-repeat: no-repeat;
+		overflow: visible;
+		width: 250px;
+		height: 100px;
+		position: absolute;
+		right: 0px;
+		top: 0px;
+		z-index: -1;
 	}
 </style>
