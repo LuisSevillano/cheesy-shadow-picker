@@ -1,0 +1,1 @@
+const s="Cheesie shadow picker",o="List of the coolest CSS text-shadows from media sources for using in your graphics!",e="",t="",f="#ffffff",a="#000000",i="#ffffff",r="#000000";export{o as a,e as b,t as c,r as d,a as l,f as m,i as r,s};
