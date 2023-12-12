@@ -8,7 +8,11 @@
 		<h1>Chessie shadow picker</h1>
 		<h3>{siteDescription}</h3>
 	</header>
-	<p>
+
+
+	<Shadows />
+	<div>
+		<p>
 		This shadows have been collected from media like The New York Times, Washington Post, Reuters
 		Graphics, Propublica, Bloomberg or El País. Some of them have been slightly modified to fit the
 		default black/white scheme. This feature is especially useful in combination with <a
@@ -16,11 +20,13 @@
 		> or for highlighting text on any kind of graphic, map or photo.
 	</p>
 	<p>
-		The shadows are shown below in a list where you can change text color or shadow color, the
+		You can change text color or shadow color, the
 		background or even invert that configuration. Click on a shadow block to copy that shadow to your clipboard.
 	</p>
-
-	<Shadows />
+	<p>
+		Feel free to suggest your own shadows to make this collection bigger or make a <a href="https://github.com/luissevillano/chessie-shadow-picker">fork</a> to improve it.
+	</p>
+	</div>
 </main>
 
 <style>
@@ -30,7 +36,7 @@
 		flex-wrap: wrap;
 		justify-content: space-between;
 		position: relative;
-		border-bottom: 1px solid gray;
+		/* border-bottom: 1px solid gray; */
 		margin-bottom: 2rem;
 	}
 	@media (min-width: 830px) {
@@ -60,5 +66,9 @@
 		right: 0px;
 		top: 0px;
 		z-index: -1;
+	}
+	div {
+		border-top: 1px solid rgb(200,200,200);
+		margin-top: 2rem;
 	}
 </style>
