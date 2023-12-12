@@ -22,7 +22,7 @@
 	}
 </script>
 
-<div class="shadow-line" style={imageLoaded ? `${style}` : ''} on:click={() => clickEvent(shadow)}>
+<div class="shadow-line {imageLoaded && 'image-mode'}" style={imageLoaded ? `${style}` : ''} on:click={() => clickEvent(shadow)}>
 	<p>{id}</p>
 	<div
 		class="shadow-block"
@@ -44,6 +44,15 @@
 </div>
 
 <style>
+	.image-mode.shadow-line {
+		border-radius: 0;
+		border: none;
+		border-top: 2px solid rgb(250, 250, 250);
+		box-shadow: none;
+	}
+	.image-mode .shadow-block {
+		padding: 0;
+	}
 	.shadow-line {
 		padding-bottom: 1.5rem;
 		border: 1px solid rgb(250, 250, 250);
@@ -72,7 +81,6 @@
 	}
 	.form-block a,
 	span {
-		color: #bababa;
 		font-size: 80%;
 	}
 	.form-block span {
