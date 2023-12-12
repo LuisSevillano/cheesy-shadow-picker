@@ -1,10 +1,11 @@
 <script>
 	import Shadows from '$lib/Shadows.svelte';
+	import { siteDescription } from '$lib/config';
 </script>
 
 <header>
 	<h1>Chessie shadow picker</h1>
-	<h3>A collection of authentic and delightful CSS shadows to use in your maps or web graphics.</h3>
+	<h3>{siteDescription}</h3>
 </header>
 <main>
 	<p>
