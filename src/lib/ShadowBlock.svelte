@@ -2,7 +2,6 @@
 	import utils from '$lib/utils/utils';
 	const { copyToClipboard } = utils;
 	export let shadow;
-	export let id;
 	export let source;
 	export let text;
 	export let mainTextColor;
@@ -58,10 +57,5 @@
 	a[href] {
 		text-decoration: none;
 	}
-	label {
-		display: flex;
-	}
-	label[disabled='true'] {
-		color: lightgray;
-	}
+
 </style>

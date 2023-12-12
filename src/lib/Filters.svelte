@@ -215,13 +215,6 @@
 		min-width: 60px;
 		cursor: pointer;
 	}
-	button.active {
-		background-color: black;
-		color: white;
-		border: 2px solid black;
-		font-weight: bold;
-		opacity: 1;
-	}
 	.row {
 		display: flex;
 		flex-wrap: wrap;
