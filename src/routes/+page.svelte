@@ -9,23 +9,24 @@
 		<h3>{siteDescription}</h3>
 	</header>
 
-
 	<Shadows />
 	<div>
 		<p>
-		This shadows have been collected from media like The New York Times, Washington Post, Reuters
-		Graphics, Propublica, Bloomberg or El País. Some of them have been slightly modified to fit the
-		default black/white scheme. This feature is especially useful in combination with <a
-			href="http://ai2html.org/">ai2html</a
-		> or for highlighting text on any kind of graphic, map or photo.
-	</p>
-	<p>
-		You can change text color or shadow color, the
-		background or even invert that configuration. Click on a shadow block to copy that shadow to your clipboard.
-	</p>
-	<p>
-		Feel free to suggest your own shadows to make this collection bigger or make a <a href="https://github.com/luissevillano/chessie-shadow-picker">fork</a> to improve it.
-	</p>
+			This shadows have been collected from media like The New York Times, Washington Post, Reuters
+			Graphics, Propublica, Bloomberg or El País. Some of them have been slightly modified to fit
+			the default black/white scheme. This feature is especially useful in combination with <a
+				href="http://ai2html.org/">ai2html</a
+			> or for highlighting text on any kind of graphic, map or photo.
+		</p>
+		<p>
+			You can change text color or shadow color, the background or even invert that configuration.
+			Click on a shadow block to copy that shadow to your clipboard.
+		</p>
+		<p>
+			Feel free to suggest your own shadows to make this collection bigger or make a <a
+				href="https://github.com/luissevillano/chessie-shadow-picker">fork</a
+			> to improve it.
+		</p>
 	</div>
 </main>
 
@@ -36,7 +37,6 @@
 		flex-wrap: wrap;
 		justify-content: space-between;
 		position: relative;
-		/* border-bottom: 1px solid gray; */
 		margin-bottom: 2rem;
 	}
 	@media (min-width: 830px) {
@@ -50,7 +50,11 @@
 		width: 100%;
 		max-width: 50rem;
 		margin: 0 auto;
-		text-shadow: 0px 0px 1px #ffffff, 0px 0px 2px #ffffff, 0px 0px 3px #ffffff, 0px 0px 4px #ffffff;
+		text-shadow:
+			0px 0px 1px #ffffff,
+			0px 0px 2px #ffffff,
+			0px 0px 3px #ffffff,
+			0px 0px 4px #ffffff;
 	}
 	h3 {
 		font-weight: lighter;
@@ -68,7 +72,7 @@
 		z-index: -1;
 	}
 	div {
-		border-top: 1px solid rgb(200,200,200);
+		border-top: 1px solid rgb(200, 200, 200);
 		margin-top: 2rem;
 	}
 </style>

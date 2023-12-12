@@ -3,15 +3,15 @@ import { vitePreprocess } from '@sveltejs/kit/vite';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
-    preprocess: vitePreprocess(),
+	preprocess: vitePreprocess(),
 
-    kit: {
-        appDir: 'app',
-        adapter: adapter(),
-        paths: {
-            base: process.env.NODE_ENV === 'production' ? '/chessie-shadow-picker' : ''
-        }
-    }
+	kit: {
+		appDir: 'app',
+		adapter: adapter(),
+		paths: {
+			base: process.env.NODE_ENV === 'production' ? '/chessie-shadow-picker' : ''
+		}
+	}
 };
 
 export default config;
