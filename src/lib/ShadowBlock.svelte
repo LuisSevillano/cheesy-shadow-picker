@@ -3,6 +3,7 @@
 	import utils from '$lib/utils/utils';
 	const { copyToClipboard } = utils;
 	export let id;
+	export let imageLoaded = false;
 	export let shadow;
 	export let source;
 	export let text;
@@ -21,11 +22,13 @@
 	}
 </script>
 
-<div class="shadow-line" on:click={() => clickEvent(shadow)}>
+<div class="shadow-line" style={imageLoaded ? `${style}` : ''} on:click={() => clickEvent(shadow)}>
 	<p>{id}</p>
 	<div
 		class="shadow-block"
-		style="background-image: linear-gradient(to right, {leftGradColor}, {rightGradColor});"
+		style={imageLoaded
+			? ''
+			: `background-image: linear-gradient(to right, ${leftGradColor}, ${rightGradColor});`}
 		title={source}
 	>
 		<p {style}>
@@ -57,7 +60,6 @@
 		user-select: none;
 		font-family: monospace;
 		color: white;
-		background-image: linear-gradient(to right, #000000, #ffffff);
 		padding: 0.3rem 0.5rem;
 		border-radius: 2px;
 		margin-top: 4px;

@@ -1,6 +1,6 @@
 <script>
 	import ShadowBlock from '$lib/ShadowBlock.svelte';
-	import shadows from '$lib/utils/stores';
+	import shadows, { image } from '$lib/utils/stores';
 	import { cheeses } from '$lib/utils/data';
 	import {
 		mainTextColorDef,
@@ -16,6 +16,7 @@
 	let rightGradColor = rightGradColorDef;
 	let mainShadowColor = mainShadowColorDef;
 	let invert = false;
+	$: bgImage = `background-image: url("${$image}");`;
 </script>
 
 <Filters
@@ -26,17 +27,24 @@
 	bind:rightGradColor
 />
 
-{#each $shadows as { shadow, source, id }, index (id)}
-	<ShadowBlock
-		{id}
-		{mainTextColor}
-		{leftGradColor}
-		{rightGradColor}
-		{shadow}
-		{source}
-		text={cheeses[index] || cheeses[0]}
-	/>
-{/each}
+<div class="shadows" style={bgImage}>
+	{#each $shadows as { shadow, source, id }, index (id)}
+		<ShadowBlock
+			imageLoaded={$image !== ''}
+			{id}
+			{mainTextColor}
+			{leftGradColor}
+			{rightGradColor}
+			{shadow}
+			{source}
+			text={cheeses[index] || cheeses[0]}
+		/>
+	{/each}
+</div>
 
 <style>
+	.shadows {
+		background-position: center;
+		background-size: contain;
+	}
 </style>
