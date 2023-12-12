@@ -3,11 +3,11 @@
 	import { siteDescription } from '$lib/config';
 </script>
 
-<header>
-	<h1>Chessie shadow picker</h1>
-	<h3>{siteDescription}</h3>
-</header>
 <main>
+	<header>
+		<h1>Chessie shadow picker</h1>
+		<h3>{siteDescription}</h3>
+	</header>
 	<p>
 		This shadows have been collected from media like The New York Times, Washington Post, Reuters
 		Graphics, Propublica, Bloomberg or El País. Some of them have been slightly modified to fit the
@@ -31,9 +31,7 @@
 		justify-content: space-between;
 		position: relative;
 		border-bottom: 1px solid gray;
-		max-width: 50rem;
-		margin: 0 auto;
-		width: 90%;
+		margin-bottom: 2rem;
 	}
 	@media (min-width: 830px) {
 		header {
@@ -51,7 +49,7 @@
 	h3 {
 		font-weight: lighter;
 	}
-	header::before {
+	main::before {
 		content: '';
 		background-image: url(/cheese.svg);
 		background-repeat: no-repeat;
