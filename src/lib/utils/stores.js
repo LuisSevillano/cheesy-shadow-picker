@@ -17,3 +17,5 @@ export function createDefaultStore() {
 const data = createDefaultStore();
 
 export default data;
+
+export const image = writable('');
