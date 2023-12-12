@@ -1,6 +1,7 @@
 <script>
 	import Shadows from '$lib/Shadows.svelte';
 	import { siteDescription } from '$lib/config';
+	import Drop from '$lib/Drop.svelte';
 </script>
 
 <main>
@@ -10,6 +11,11 @@
 	</header>
 
 	<Shadows />
+	<p>
+		Optionally, you can upload an image, for example a satellite image or a map, to find the shadow
+		that best suits your needs.
+	</p>
+	<Drop />
 	<div>
 		<p>
 			This shadows have been collected from media like The New York Times, Washington Post, Reuters
