@@ -17,7 +17,7 @@
 	</p>
 	<p>
 		The shadows are shown below in a list where you can change text color or shadow color, the
-		background or even invert that configuration.
+		background or even invert that configuration. Click on a shadow block to copy that shadow to your clipboard.
 	</p>
 
 	<Shadows />
