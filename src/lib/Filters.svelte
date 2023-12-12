@@ -173,6 +173,7 @@
 				bind:color={mainShadowColor}
 				label={'Shadow color'}
 				on:input={updateShadowColor}
+				on:change={updateShadowColor}
 			/>
 		</div>
 		<div class="filter">

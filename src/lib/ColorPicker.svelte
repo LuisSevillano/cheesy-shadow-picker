@@ -8,6 +8,7 @@
 	>{label}:
 	<input
 		on:input
+		on:change
 		style="height:20px;width:30px;"
 		type="color"
 		bind:value={color}
