@@ -28,6 +28,7 @@
 
 {#each $shadows as { shadow, source, id }, index (id)}
 	<ShadowBlock
+		{id}
 		{mainTextColor}
 		{leftGradColor}
 		{rightGradColor}
