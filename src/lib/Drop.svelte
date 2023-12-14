@@ -1,4 +1,5 @@
 <script>
+	import { fade } from 'svelte/transition';
 	import { image } from '$lib/utils/stores';
 	let isDragging = false;
 	let files;
@@ -6,6 +7,8 @@
 
 	$: isValidFile = true;
 	$: isUploaded = false;
+
+	let loading = false;
 
 	$: if (files) {
 		// read file picker file
@@ -20,12 +23,13 @@
 
 	function readFile(file) {
 		const reader = new FileReader();
-
 		if (file.type.match('image')) {
+			loading = true;
 			reader.onload = () => {
 				isUploaded = true;
 				fileMetadata = file;
 				image.set(reader.result);
+				loading = false;
 			};
 
 			reader.readAsDataURL(file);
@@ -54,18 +58,23 @@
 				{#if isValidFile && !isUploaded}
 					<div class="drag-callout">
 						<div class="drag-callout-title">
-							<svg
-								class="drag-icon"
-								xmlns="http://www.w3.org/2000/svg"
-								height="24"
-								viewBox="0 0 24 24"
-								width="24"
-							>
-								<path d="M0 0h24v24H0z" fill="none" />
-								<path d="M5 4v2h14V4H5zm0 10h4v6h6v-6h4l-7-7-7 7z" />
-							</svg>
-
-							<div>Drop your image or <span class="underline">select it</span></div>
+							{#if loading}
+								<div out:fade={{ duration: 1000 }} class="loading-msg">
+									Loading<span>.</span><span>.</span><span>.</span>
+								</div>
+							{:else}
+								<svg
+									class="drag-icon"
+									xmlns="http://www.w3.org/2000/svg"
+									height="24"
+									viewBox="0 0 24 24"
+									width="24"
+								>
+									<path d="M0 0h24v24H0z" fill="none" />
+									<path d="M5 4v2h14V4H5zm0 10h4v6h6v-6h4l-7-7-7 7z" />
+								</svg>
+								<div>Drop your image or <span class="underline">select it</span></div>
+							{/if}
 						</div>
 					</div>
 				{:else if isUploaded}
@@ -163,5 +172,28 @@
 	.drag-error-hint {
 		margin-top: 0.25rem;
 		color: var(--grey-text);
+	}
+	@keyframes show {
+		30% {
+			opacity: 0;
+		}
+
+		100% {
+			opacity: 1;
+		}
+	}
+	.loading-msg {
+	}
+	.loading-msg > span:nth-child(1) {
+		-webkit-animation: show 1s -0.24s infinite cubic-bezier(0.2, 0.68, 0.18, 1.08);
+		animation: show 1s -0.24s infinite cubic-bezier(0.2, 0.68, 0.18, 1.08);
+	}
+	.loading-msg > span:nth-child(2) {
+		-webkit-animation: show 1s -0.12s infinite cubic-bezier(0.2, 0.68, 0.18, 1.08);
+		animation: show 1s -0.12s infinite cubic-bezier(0.2, 0.68, 0.18, 1.08);
+	}
+	.loading-msg > span:nth-child(3) {
+		-webkit-animation: show 1s 0s infinite cubic-bezier(0.2, 0.68, 0.18, 1.08);
+		animation: show 1s 0s infinite cubic-bezier(0.2, 0.68, 0.18, 1.08);
 	}
 </style>
