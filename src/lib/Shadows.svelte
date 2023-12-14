@@ -32,7 +32,7 @@
 
 	<div class="shadows-list" style={bgImage}>
 		{#each $shadows as { shadow, source, id }, index (id)}
-			<div class:list>
+			<div class:list class="shadow-item">
 				<ShadowBlock
 					imageMode={list}
 					{id}
@@ -57,6 +57,9 @@
 	}
 	.list {
 		padding: 0.5rem;
+	}
+	.shadow-item {
+		flex-grow: 1;
 	}
 	@media (min-width: 830px) {
 		.list {
