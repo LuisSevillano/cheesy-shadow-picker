@@ -30,7 +30,7 @@
 		</p>
 		<p>
 			Feel free to suggest your own shadows to make this collection bigger or make a <a
-				href="https://github.com/luissevillano/chessie-shadow-picker">fork</a
+				href="https://github.com/luissevillano/cheesy-shadow-picker">fork</a
 			> to improve it.
 		</p>
 	</div>
