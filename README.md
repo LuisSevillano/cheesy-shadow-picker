@@ -1,4 +1,4 @@
-# Chessie shadow picker
+# Cheesy shadow picker
 
 A collection of authentic and delightful CSS shadows to use in your maps or web graphics.
 

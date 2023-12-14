@@ -1,12 +1,12 @@
 <script>
 	import Shadows from '$lib/Shadows.svelte';
-	import { siteDescription } from '$lib/config';
+	import { siteTitle, siteDescription } from '$lib/config';
 	import Drop from '$lib/Drop.svelte';
 </script>
 
 <main>
 	<header>
-		<h1>Chessie shadow picker</h1>
+		<h1>{siteTitle}</h1>
 		<h3>{siteDescription}</h3>
 	</header>
 

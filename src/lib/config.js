@@ -1,4 +1,4 @@
-export const siteTitle = 'Cheesie shadow picker';
+export const siteTitle = 'Cheesy shadow picker';
 export const siteDescription =
 	'A collection of authentic and delightful CSS shadows to use in your maps or web graphics.';
 export const siteURL = 'https://luissevillano.net/chessie-shadow-picker/index.html';
