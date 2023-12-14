@@ -17,34 +17,50 @@
 	let mainShadowColor = mainShadowColorDef;
 	let invert = false;
 	$: bgImage = `background-image: url("${$image}");`;
+
+	$: list = $image !== '';
 </script>
 
-<Filters
-	bind:invert
-	bind:mainShadowColor
-	bind:mainTextColor
-	bind:leftGradColor
-	bind:rightGradColor
-/>
+<div class="shadows">
+	<Filters
+		bind:invert
+		bind:mainShadowColor
+		bind:mainTextColor
+		bind:leftGradColor
+		bind:rightGradColor
+	/>
 
-<div class="shadows" style={bgImage}>
-	{#each $shadows as { shadow, source, id }, index (id)}
-		<ShadowBlock
-			imageLoaded={$image !== ''}
-			{id}
-			{mainTextColor}
-			{leftGradColor}
-			{rightGradColor}
-			{shadow}
-			{source}
-			text={cheeses[index] || cheeses[0]}
-		/>
-	{/each}
+	<div class="shadows-list" style={bgImage}>
+		{#each $shadows as { shadow, source, id }, index (id)}
+			<div class:list>
+				<ShadowBlock
+					imageMode={list}
+					{id}
+					{mainTextColor}
+					{leftGradColor}
+					{rightGradColor}
+					{shadow}
+					{source}
+					text={cheeses[index] || cheeses[0]}
+				/>
+			</div>
+		{/each}
+	</div>
 </div>
 
 <style>
-	.shadows {
+	.shadows-list {
 		background-position: center;
-		background-size: contain;
+		background-size: cover;
+		display: flex;
+		flex-wrap: wrap;
+	}
+	.list {
+		padding: 0.5rem;
+	}
+	@media (min-width: 830px) {
+		.list {
+			padding: 1rem;
+		}
 	}
 </style>

@@ -1,9 +1,10 @@
 <script>
 	import { fade } from 'svelte/transition';
+
 	import utils from '$lib/utils/utils';
 	const { copyToClipboard } = utils;
 	export let id;
-	export let imageLoaded = false;
+	export let imageMode = false;
 	export let shadow;
 	export let source;
 	export let text;
@@ -22,19 +23,23 @@
 	}
 </script>
 
-<div class="shadow-line {imageLoaded && 'image-mode'}" style={imageLoaded ? `${style}` : ''} on:click={() => clickEvent(shadow)}>
+<div
+	class="shadow-line {imageMode && 'image-mode'}"
+	style={imageMode ? `${style}` : ''}
+	on:click={() => clickEvent(shadow)}
+>
 	<p>{id}</p>
-	<div
-		class="shadow-block"
-		style={imageLoaded
-			? ''
-			: `background-image: linear-gradient(to right, ${leftGradColor}, ${rightGradColor});`}
-		title={source}
-	>
-		<p {style}>
-			{text}
-		</p>
-	</div>
+	{#if !imageMode}
+		<div
+			class="shadow-block"
+			style={`background-image: linear-gradient(to right, ${leftGradColor}, ${rightGradColor});`}
+			title={source}
+		>
+			<p {style}>
+				{text}
+			</p>
+		</div>
+	{/if}
 	<div class="form-block">
 		<a href={source}>Source</a>
 		{#if copyMessageVisible}
@@ -47,7 +52,7 @@
 	.image-mode.shadow-line {
 		border-radius: 0;
 		border: none;
-		border-top: 2px solid rgb(250, 250, 250);
+		/* border-top: 2px solid rgb(250, 250, 250); */
 		box-shadow: none;
 	}
 	.image-mode .shadow-block {
@@ -62,7 +67,7 @@
 		box-shadow: 0 1px 2px rgb(0 0 0 / 33%);
 		cursor: pointer;
 	}
-	.shadow-line:hover {
+	.shadow-line:not(.image-mode):hover {
 		box-shadow: 0 1px 2px rgb(0 0 0 / 66%);
 	}
 	.shadow-block {
@@ -77,11 +82,13 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
+	}
+	.shadow-line:not(.image-mode) .form-block {
 		margin-top: 0.5rem;
 	}
 	.form-block a,
 	span {
-		font-size: 80%;
+		font-size: 70%;
 	}
 	.form-block span {
 		color: black;
