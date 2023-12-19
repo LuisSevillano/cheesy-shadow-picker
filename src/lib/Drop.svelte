@@ -10,6 +10,11 @@
 
 	let loading = false;
 
+	function resetImage() {
+		image.set('');
+		isUploaded = false;
+	}
+
 	$: if (files) {
 		// read file picker file
 		const [file] = files;
@@ -80,6 +85,7 @@
 				{:else if isUploaded}
 					<div>
 						<div class="drag-filename">{fileMetadata.name}</div>
+						<button on:click|preventDefault={resetImage}>Remove</button>
 					</div>
 				{:else}
 					<div class="drag-error-title">Error while reading the file</div>
@@ -121,6 +127,11 @@
 		cursor: pointer;
 	}
 
+	label div {
+		display: flex;
+		align-items: center;
+	}
+
 	.drag-callout {
 		z-index: 1;
 	}
@@ -146,6 +157,7 @@
 	.drag-filename {
 		pointer-events: none;
 		font-weight: 500;
+		margin: 0 0.25rem;
 	}
 	.drag-filesize {
 		pointer-events: none;
@@ -182,8 +194,6 @@
 			opacity: 1;
 		}
 	}
-	.loading-msg {
-	}
 	.loading-msg > span:nth-child(1) {
 		-webkit-animation: show 1s -0.24s infinite cubic-bezier(0.2, 0.68, 0.18, 1.08);
 		animation: show 1s -0.24s infinite cubic-bezier(0.2, 0.68, 0.18, 1.08);
@@ -195,5 +205,13 @@
 	.loading-msg > span:nth-child(3) {
 		-webkit-animation: show 1s 0s infinite cubic-bezier(0.2, 0.68, 0.18, 1.08);
 		animation: show 1s 0s infinite cubic-bezier(0.2, 0.68, 0.18, 1.08);
+	}
+	button {
+		background-color: white;
+		color: darkred;
+	}
+
+	button:hover {
+		outline-color: black;
 	}
 </style>

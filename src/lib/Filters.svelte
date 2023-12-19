@@ -206,15 +206,11 @@
 	button {
 		background-color: white;
 		color: #f39008;
-		border: 1px solid #f39008;
-		border-radius: 2px;
-		padding: 0.25rem 0.5rem;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		white-space: nowrap;
-		min-width: 60px;
-		cursor: pointer;
+		outline-color: #f39008;
+	}
+
+	button:hover {
+		outline-color: black;
 	}
 	.row {
 		display: flex;
@@ -256,10 +252,7 @@
 		padding: 0;
 		margin-left: 0.25rem;
 	}
-	button:hover {
-		background-color: rgb(235, 235, 235);
-		color: black;
-	}
+
 	@media (min-width: 830px) {
 		.row {
 			justify-content: space-between;
