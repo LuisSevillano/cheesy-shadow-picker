@@ -148,6 +148,11 @@ const shadows = [
 		shadow: '1px 1px 2px rgb(0 0 0 / 50%);',
 		source: 'https://graphics.reuters.com/CHINA-CRASH/akpezjzxlvr/index.html',
 		id: 'Burrata'
+	},
+	{
+		shadow: '#000000 1px 0px 0px,#000000 .5px .8px 0px,#000000 -.4px .9px 0px,#000000 -.98px .14px 0px,#000000 -.65px -.75px 0px,#000000 .28px -.95px 0px,#000000 .96px -.27px 0px;',
+		source: 'https://www.nytimes.com/interactive/2024/04/26/us/politics/us-china-military-bases-weapons.html',
+		id: 'Raclette'
 	}
 ];
 
@@ -183,5 +188,6 @@ export const cheeses = [
 	'Agur blue cheese bavarian bergkase everyone loves croque monsieur cheese slices cheesy grin',
 	'Cheese and wine halloumi cheesy grin ricotta cheesecake cheesecake mozzarella fromage frais',
 	'Cheese on toast who moved my cheese airedale dolcelatte parmesan say cheese mozzarella goat',
-	'Cheddar taleggio chalk and cheese fromage feta chalk and cheese cheese and biscuits stilton'
+	'Cheddar taleggio chalk and cheese fromage feta chalk and cheese cheese and biscuits stilton',
+	'Pecorino de normandie halloumi the big cheese boursin edam said cheese cheeseburger ricotta'
 ];
