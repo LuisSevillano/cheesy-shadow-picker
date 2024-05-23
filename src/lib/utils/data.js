@@ -150,9 +150,16 @@ const shadows = [
 		id: 'Burrata'
 	},
 	{
-		shadow: '#000000 1px 0px 0px,#000000 .5px .8px 0px,#000000 -.4px .9px 0px,#000000 -.98px .14px 0px,#000000 -.65px -.75px 0px,#000000 .28px -.95px 0px,#000000 .96px -.27px 0px;',
-		source: 'https://www.nytimes.com/interactive/2024/04/26/us/politics/us-china-military-bases-weapons.html',
+		shadow:
+			'#000000 1px 0px 0px,#000000 .5px .8px 0px,#000000 -.4px .9px 0px,#000000 -.98px .14px 0px,#000000 -.65px -.75px 0px,#000000 .28px -.95px 0px,#000000 .96px -.27px 0px;',
+		source:
+			'https://www.nytimes.com/interactive/2024/04/26/us/politics/us-china-military-bases-weapons.html',
 		id: 'Raclette'
+	},
+	{
+		source: 'https://www.washingtonpost.com/world/2023/10/18/gaza-war-damage-images-maps/',
+		shadow: '-1px -1px 0 #000000, 1px -1px 0 #000000, -1px 1px 0 #000000, 1px 1px 0 #000000;',
+		id: 'Oloroso cheese'
 	}
 ];
 
@@ -160,6 +167,7 @@ const shadows = [
 export default [...new Map(shadows.map((s) => [s.shadow, s])).values()];
 
 export const cheeses = [
+	'Dolcelatte de normandie cheesecake the big cheese boursin edam say cheese cheeseburger rico',
 	'Queso cheeseburger boursin gouda cheesy grin bocconcini bavarian bergkase bavarian bergkase',
 	'Goat paneer cheese triangles cheese on toast rubber cheese halloumi caerphilly cheeseburger',
 	'Emmental taleggio blue castello port-salut cheese strings cheesy feet dolcelatte say cheese',
