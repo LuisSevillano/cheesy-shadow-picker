@@ -1,5 +1,5 @@
 <script>
-	import ColorPicker from '$lib/ColorPicker.svelte';
+	import ColorPicker from '$lib/components/ColorPicker.svelte';
 	import shadows from '$lib/utils/stores';
 
 	import {

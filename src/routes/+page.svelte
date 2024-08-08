@@ -1,7 +1,7 @@
 <script>
-	import Shadows from '$lib/Shadows.svelte';
+	import Shadows from '$lib/components/Shadows.svelte';
 	import { siteTitle, siteDescription } from '$lib/config';
-	import Drop from '$lib/Drop.svelte';
+	import Drop from '$lib/components/Drop.svelte';
 </script>
 
 <main>
@@ -39,6 +39,7 @@
 <style>
 	header {
 		padding: 1rem 0;
+		padding-top: 1.5rem;
 		display: flex;
 		flex-wrap: wrap;
 		justify-content: space-between;

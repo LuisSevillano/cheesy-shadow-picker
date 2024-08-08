@@ -97,6 +97,9 @@
 </div>
 
 <style>
+	label svg + div {
+		display: block;
+	}
 	.data-input {
 		margin: 1rem 0;
 	}

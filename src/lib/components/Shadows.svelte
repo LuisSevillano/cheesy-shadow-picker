@@ -1,5 +1,5 @@
 <script>
-	import ShadowBlock from '$lib/ShadowBlock.svelte';
+	import ShadowBlock from '$lib/components/ShadowBlock.svelte';
 	import shadows, { image } from '$lib/utils/stores';
 	import { cheeses } from '$lib/utils/data';
 	import {
