@@ -1,5 +1,5 @@
 <script>
-	import ShadowBlock from '$lib/components/ShadowBlock.svelte';
+	import ShadowRow from '$lib/components/ShadowRow.svelte';
 	import shadows, { image } from '$lib/utils/stores';
 	import { cheeses } from '$lib/utils/data';
 	import {
@@ -33,7 +33,7 @@
 	<div class="shadows-list" style={bgImage}>
 		{#each $shadows as { shadow, source, id }, index (id)}
 			<div class:list class="shadow-item">
-				<ShadowBlock
+				<ShadowRow
 					imageMode={list}
 					{id}
 					{mainTextColor}
