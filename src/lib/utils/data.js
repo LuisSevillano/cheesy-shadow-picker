@@ -160,6 +160,12 @@ const shadows = [
 		source: 'https://www.washingtonpost.com/world/2023/10/18/gaza-war-damage-images-maps/',
 		shadow: '-1px -1px 0 #000000, 1px -1px 0 #000000, -1px 1px 0 #000000, 1px 1px 0 #000000;',
 		id: 'Oloroso cheese'
+	},
+	{
+		source:
+			'https://www.nytimes.com/interactive/2025/06/12/world/middleeast/iran-israel-maps.html/',
+		shadow: '1px 1px 0px #000000,-1px 1px 0px #000000,1px -1px 0px #000000,-1px -1px 0px #000000;',
+		id: 'Pecorino II'
 	}
 ];
 
