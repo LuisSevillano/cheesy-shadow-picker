@@ -31,15 +31,16 @@
 				>
 					Preview
 				</span>
+				{#if selectedShadowRaw === shadowItem.shadow && shadowItem.source}
+					<span class="source-wrap">
+						<a class="shadow-source" href={shadowItem.source} target="_blank" rel="noreferrer">
+							View reference
+						</a>
+					</span>
+				{/if}
 			</button>
 		{/each}
 	</div>
-
-	{#if selectedShadowMeta?.source}
-		<div class="library-footer">
-			<a href={selectedShadowMeta.source}>View Reference</a>
-		</div>
-	{/if}
 </aside>
 
 <style>
@@ -72,8 +73,7 @@
 		overflow: auto;
 	}
 
-	button,
-	a {
+	button {
 		font-size: 0.69rem;
 		font-weight: 600;
 		line-height: 1.2;
@@ -84,25 +84,24 @@
 		transition: background-color 120ms ease;
 	}
 
-	button:hover,
-	a:hover {
+	button:hover {
 		background: var(--app-bg);
 	}
 
-	button:focus-visible,
-	a:focus-visible {
+	button:focus-visible {
 		outline: 2px solid var(--brand-accent);
 		outline-offset: 1px;
 	}
 
 	.shadow-choice {
-		display: grid;
+		display: flex;
+		flex-direction: column;
 		gap: 0.18rem;
 		text-align: left;
 		border: 0;
 		border-bottom: 1px solid var(--panel-border);
 		border-left: 2px solid transparent;
-		background: #fff;
+		background: var(--sidebar-bg);
 		color: var(--text-primary);
 		width: 100%;
 		padding: 0.6rem 0.75rem;
@@ -133,20 +132,16 @@
 		font-family: 'JetBrains Mono', 'Consolas', monospace;
 	}
 
-	.library-footer {
-		padding: 0.7rem 0.75rem;
-		border-top: 1px solid var(--panel-border);
+	.source-wrap {
+		display: block;
+		margin-top: 0.15rem;
 	}
 
-	.library-footer a {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		width: 100%;
-		padding: 0.35rem 0.5rem;
-		background: var(--brand-dark);
-		border: 1px solid var(--brand-dark);
-		color: #fff;
+	.shadow-source {
+		font-size: 0.65rem;
+		color: #b0b1b3;
+		text-decoration: underline;
+		text-underline-offset: 2px;
 	}
 
 	@media (min-width: 980px) {

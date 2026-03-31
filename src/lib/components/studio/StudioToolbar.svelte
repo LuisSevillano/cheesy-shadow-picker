@@ -89,19 +89,23 @@
 
 	<div class="toolbar-row main-controls-row">
 		{#if artboards.length > 1}
-			<label class="select-wrap" for="artboard-select">
-				<span>Artboard</span>
-				<select
-					id="artboard-select"
-					name="artboard"
-					bind:value={selectedArtboardId}
-					onchange={onArtboardChange}
-				>
+			<div class="artboard-switcher">
+				<span class="artboard-label">Artboard</span>
+				<div class="artboard-buttons">
 					{#each artboards as artboard}
-						<option value={artboard.id}>{artboard.name}</option>
+						<button
+							type="button"
+							class={`artboard-btn ${selectedArtboardId === artboard.id ? 'is-active' : ''}`}
+							onclick={() => {
+								selectedArtboardId = artboard.id;
+								onArtboardChange({ currentTarget: { value: artboard.id } });
+							}}
+						>
+							{artboard.name}
+						</button>
 					{/each}
-				</select>
-			</label>
+				</div>
+			</div>
 		{/if}
 
 		<p class="metric">Native Width: {stageWidth}px</p>
@@ -365,6 +369,43 @@
 	.metric {
 		font-size: 0.72rem;
 		color: var(--text-secondary);
+	}
+
+	.artboard-switcher {
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+	}
+
+	.artboard-label {
+		font-size: 0.72rem;
+		color: var(--text-secondary);
+	}
+
+	.artboard-buttons {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.25rem;
+	}
+
+	.artboard-btn {
+		padding: 0.25rem 0.5rem;
+		font-size: 0.66rem;
+		border: 1px solid var(--panel-border);
+		background: var(--panel-bg);
+		color: var(--text-primary);
+		border-radius: 3px;
+		white-space: nowrap;
+	}
+
+	.artboard-btn:hover {
+		background: var(--app-bg);
+	}
+
+	.artboard-btn.is-active {
+		background: var(--brand-dark);
+		color: #fff;
+		border-color: var(--brand-dark);
 	}
 
 	.metric {
