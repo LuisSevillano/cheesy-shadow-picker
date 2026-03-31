@@ -86,7 +86,6 @@ export function parseAi2htmlDocument(rawHtml = '') {
 
 	const artboards = artboardNodes.map((artboardNode, artboardIndex) => {
 		const styleMap = parseInlineStyle(artboardNode.getAttribute('style') || '');
-		const imageNode = artboardNode.querySelector('img.g-aiImg, img');
 		const spacerNode = artboardNode.querySelector(':scope > div:not([id])');
 		const spacerStyle = parseInlineStyle(spacerNode?.getAttribute('style') || '');
 
@@ -94,6 +93,10 @@ export function parseAi2htmlDocument(rawHtml = '') {
 		const labelNodes = graphicNode
 			? [...graphicNode.querySelectorAll('.g-aiAbs')]
 			: [...artboardNode.querySelectorAll(':scope > div.g-aiAbs')];
+
+		const imageNode = graphicNode
+			? graphicNode.querySelector('img.g-aiImg, img')
+			: artboardNode.querySelector('img.g-aiImg, img');
 
 		const hasSpacer = spacerNode && Object.keys(spacerStyle).length > 0;
 
