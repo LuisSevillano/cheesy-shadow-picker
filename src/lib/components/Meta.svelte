@@ -7,6 +7,7 @@
 	<title>{siteTitle}</title>
 	<meta name="title" content={siteTitle} />
 	<meta name="description" content={siteDescription} />
+	<meta name="theme-color" content="#eef2f7" />
 
 	<!-- Open Graph / Facebook -->
 	<meta property="og:type" content="website" />

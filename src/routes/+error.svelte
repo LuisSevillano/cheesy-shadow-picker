@@ -3,9 +3,10 @@
 </script>
 
 <main>
+	<h1>Página no encontrada</h1>
 	<p>Sorry about that</p>
 	<div>
-		<img class="rotate" src="/404.jpeg" alt="" />
+		<img class="rotate" src="/404.jpeg" alt="" width="300" height="300" loading="eager" />
 	</div>
 	<a class="back" href="../">Volver</a>
 </main>
@@ -16,6 +17,9 @@
 		display: flex;
 		align-items: center;
 		flex-direction: column;
+	}
+	h1 {
+		margin-bottom: 0.5rem;
 	}
 	div {
 		border-radius: 50%;
@@ -28,6 +32,11 @@
 	}
 	.rotate {
 		animation: rotation 80s infinite linear;
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.rotate {
+			animation: none;
+		}
 	}
 	@keyframes rotation {
 		from {

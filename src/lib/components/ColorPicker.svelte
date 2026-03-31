@@ -1,20 +1,29 @@
 <script>
-	export let color = '#000000';
-	export let label = '';
-	export let disabled = false;
+	let {
+		color = $bindable('#000000'),
+		label = '',
+		name = '',
+		disabled = false,
+		onInput = () => {},
+		onChange = () => {}
+	} = $props();
+
+	let inputName = $derived(name || label.toLowerCase().replace(/\s+/g, '-'));
 </script>
 
-<label {disabled}
-	>{label}:
+<label>
+	{label}:
 	<input
-		on:input
-		on:change
+		oninput={onInput}
+		onchange={onChange}
 		style="height:20px;width:30px;"
 		type="color"
+		name={inputName}
+		autocomplete="off"
 		bind:value={color}
 		{disabled}
-	/></label
->
+	/>
+</label>
 
 <style>
 	input {

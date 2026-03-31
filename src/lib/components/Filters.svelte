@@ -1,6 +1,7 @@
 <script>
 	import ColorPicker from '$lib/components/ColorPicker.svelte';
 	import shadows from '$lib/utils/stores';
+	import { get } from 'svelte/store';
 
 	import {
 		mainTextColorDef,
@@ -9,12 +10,15 @@
 		mainShadowColorDef
 	} from '$lib/config.js';
 
-	export let mainTextColor;
-	export let mainShadowColor;
-	export let leftGradColor;
-	export let rightGradColor;
-	export let invert = false;
-	$: invertShadow = invert;
+	let {
+		mainTextColor = $bindable(mainTextColorDef),
+		mainShadowColor = $bindable(mainShadowColorDef),
+		leftGradColor = $bindable(leftGradColorDef),
+		rightGradColor = $bindable(rightGradColorDef),
+		invert = $bindable(false)
+	} = $props();
+
+	let invertShadow = $derived(invert);
 
 	function reset() {
 		mainTextColor = mainTextColorDef;
@@ -39,7 +43,7 @@
 	}
 
 	function updateShadowColor() {
-		const newShadows = [...$shadows].map((d, i) => {
+		const newShadows = get(shadows).map((d) => {
 			d.shadow = replaceShadowColor(d.shadow);
 			return d;
 		});
@@ -48,7 +52,7 @@
 	}
 
 	function updateShadows() {
-		const newShadows = [...$shadows].map((d, i) => {
+		const newShadows = get(shadows).map((d) => {
 			if (d.shadowSource === undefined) {
 				d.shadowSource = d.shadow;
 			}
@@ -172,8 +176,8 @@
 			<ColorPicker
 				bind:color={mainShadowColor}
 				label={'Shadow color'}
-				on:input={updateShadowColor}
-				on:change={updateShadowColor}
+				onInput={updateShadowColor}
+				onChange={updateShadowColor}
 			/>
 		</div>
 		<div class="filter">
@@ -186,8 +190,8 @@
 			<label
 				>Invert shadow<input
 					type="checkbox"
-					name=""
-					on:click={(e) => updateTextAppearance(e)}
+					name="invert-shadow"
+					onchange={updateTextAppearance}
 					checked={invertShadow}
 				/></label
 			>
@@ -195,7 +199,7 @@
 	</div>
 	<div class="row reset">
 		<div class="filter button">
-			<button on:click={() => reset()}>Reset</button>
+			<button onclick={reset}>Reset</button>
 		</div>
 	</div>
 </div>

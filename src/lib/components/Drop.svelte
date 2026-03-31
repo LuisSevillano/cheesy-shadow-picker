@@ -1,34 +1,58 @@
 <script>
 	import { fade } from 'svelte/transition';
 	import { image } from '$lib/utils/stores';
-	let isDragging = false;
-	let files;
-	let fileMetadata;
 
-	$: isValidFile = true;
-	$: isUploaded = false;
+	let isDragging = $state(false);
+	let files = $state();
+	let fileMetadata = $state();
+	let isValidFile = $state(true);
+	let isUploaded = $state(false);
+	let loading = $state(false);
 
-	let loading = false;
+	$effect(() => {
+		if (!files) {
+			return;
+		}
+
+		const [file] = files;
+		readFile(file);
+	});
 
 	function resetImage() {
 		image.set('');
 		isUploaded = false;
+		isValidFile = true;
+		fileMetadata = undefined;
 	}
 
-	$: if (files) {
-		// read file picker file
-		const [file] = files;
-		readFile(file);
+	function handleDragOver(event) {
+		event.preventDefault();
+	}
+
+	function handleDragEnter() {
+		isDragging = true;
+	}
+
+	function handleDragLeave() {
+		isDragging = false;
 	}
 
 	function dropped(event) {
+		event.preventDefault();
+		event.stopPropagation();
+		isDragging = false;
 		const [file] = event.dataTransfer.files;
 		readFile(file);
 	}
 
 	function readFile(file) {
+		if (!file) {
+			return;
+		}
+
 		const reader = new FileReader();
 		if (file.type.match('image')) {
+			isValidFile = true;
 			loading = true;
 			reader.onload = () => {
 				isUploaded = true;
@@ -49,28 +73,38 @@
 
 <div class="data-input">
 	<form
-		on:dragover|preventDefault
-		on:dragenter={() => (isDragging = true)}
-		on:dragleave={() => (isDragging = false)}
-		on:drop|preventDefault|stopPropagation={dropped}
+		ondragover={handleDragOver}
+		ondragenter={handleDragEnter}
+		ondragleave={handleDragLeave}
+		ondrop={dropped}
 		class={['drag', isDragging ? 'is-dragging' : ''].join(' ')}
 		method="post"
 		enctype="multipart/form-data"
 	>
 		<div class={['drag-input', isUploaded ? 'is-uploaded' : ''].join(' ')}>
-			<input id="file" class="drag-file" accept="text" bind:files type="file" />
+			<input
+				id="file"
+				name="background-image"
+				class="drag-file"
+				accept="image/*"
+				autocomplete="off"
+				bind:files
+				type="file"
+			/>
 			<label for="file">
 				{#if isValidFile && !isUploaded}
 					<div class="drag-callout">
 						<div class="drag-callout-title">
 							{#if loading}
-								<div out:fade={{ duration: 1000 }} class="loading-msg">
-									Loading<span>.</span><span>.</span><span>.</span>
+								<div out:fade={{ duration: 1000 }} class="loading-msg" aria-live="polite">
+									Loading…
 								</div>
 							{:else}
 								<svg
 									class="drag-icon"
 									xmlns="http://www.w3.org/2000/svg"
+									aria-hidden="true"
+									focusable="false"
 									height="24"
 									viewBox="0 0 24 24"
 									width="24"
@@ -85,7 +119,15 @@
 				{:else if isUploaded}
 					<div>
 						<div class="drag-filename">{fileMetadata.name}</div>
-						<button on:click|preventDefault={resetImage}>Remove</button>
+						<button
+							type="button"
+							onclick={(event) => {
+								event.preventDefault();
+								resetImage();
+							}}
+						>
+							Remove
+						</button>
 					</div>
 				{:else}
 					<div class="drag-error-title">Error while reading the file</div>
@@ -196,18 +238,6 @@
 		100% {
 			opacity: 1;
 		}
-	}
-	.loading-msg > span:nth-child(1) {
-		-webkit-animation: show 1s -0.24s infinite cubic-bezier(0.2, 0.68, 0.18, 1.08);
-		animation: show 1s -0.24s infinite cubic-bezier(0.2, 0.68, 0.18, 1.08);
-	}
-	.loading-msg > span:nth-child(2) {
-		-webkit-animation: show 1s -0.12s infinite cubic-bezier(0.2, 0.68, 0.18, 1.08);
-		animation: show 1s -0.12s infinite cubic-bezier(0.2, 0.68, 0.18, 1.08);
-	}
-	.loading-msg > span:nth-child(3) {
-		-webkit-animation: show 1s 0s infinite cubic-bezier(0.2, 0.68, 0.18, 1.08);
-		animation: show 1s 0s infinite cubic-bezier(0.2, 0.68, 0.18, 1.08);
 	}
 	button {
 		background-color: white;

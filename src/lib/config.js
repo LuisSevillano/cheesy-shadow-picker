@@ -1,6 +1,6 @@
-export const siteTitle = 'Cheesy shadow picker';
+export const siteTitle = 'Cheesy shadow picker 2.0';
 export const siteDescription =
-	'A collection of authentic and delightful CSS shadows to use in your maps or web graphics.';
+	'Interactive ai2html studio to move labels and assign production-ready text shadows.';
 export const siteURL = 'https://luissevillano.net/cheesy-shadow-picker/index.html';
 export const home = 'https://luissevillano.net';
 export const siteImage = 'https://luissevillano.net/cheesy-shadow-picker/cover.jpg';

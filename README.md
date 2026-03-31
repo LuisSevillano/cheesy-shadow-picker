@@ -1,11 +1,19 @@
-# Cheesy shadow picker
+# Cheesy Shadow Picker 2.0
 
-A collection of authentic and delightful CSS shadows to use in your maps or web graphics.
+Interactive Svelte + Vite studio to work with CSS text shadows over maps, photos and ai2html exports.
 
-Svelte project to list a collection of CSS text-shadow for using them in graphics, maps or pictures.
+## What is new in v2
 
-The shadows have been collected from media like The New York Times, Washington Post, Reuters Graphics, Propublica, Bloomberg or El País. Some of them have been slightly modified to fit the default black/white scheme. This feature is especially useful in combination with [ai2html](ai2html.org) or for highlighting text on any kind of graphic, map or photo.
+- Upload an ai2html `.html` export directly in the browser.
+- Parse artboards and labels automatically.
+- Drag any label around the container.
+- Select a label and apply any shadow from the built-in library.
+- Copy the active `text-shadow` value as CSS.
+- Optional image mode for manual label placement.
 
-You can change text color or shadow color, the background or even invert that configuration. Click on a shadow block to copy that shadow to your clipboard.
+## Development
 
-Feel free to suggest your own shadows via PR to make this collection bigger or make a fork of the project to improve it.
+```bash
+npm install
+npm run dev
+```

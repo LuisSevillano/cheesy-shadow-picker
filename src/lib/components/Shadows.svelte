@@ -11,14 +11,13 @@
 
 	import Filters from './Filters.svelte';
 
-	let mainTextColor = mainTextColorDef;
-	let leftGradColor = leftGradColorDef;
-	let rightGradColor = rightGradColorDef;
-	let mainShadowColor = mainShadowColorDef;
-	let invert = false;
-	$: bgImage = `background-image: url("${$image}");`;
-
-	$: list = $image !== '';
+	let mainTextColor = $state(mainTextColorDef);
+	let leftGradColor = $state(leftGradColorDef);
+	let rightGradColor = $state(rightGradColorDef);
+	let mainShadowColor = $state(mainShadowColorDef);
+	let invert = $state(false);
+	let bgImage = $derived(`background-image: url("${$image}");`);
+	let list = $derived($image !== '');
 </script>
 
 <div class="shadows">
@@ -32,7 +31,7 @@
 
 	<div class="shadows-list" style={bgImage}>
 		{#each $shadows as { shadow, source, id }, index (id)}
-			<div class:list class="shadow-item">
+			<div class={`shadow-item ${list ? 'list' : ''}`}>
 				<ShadowRow
 					imageMode={list}
 					{id}
