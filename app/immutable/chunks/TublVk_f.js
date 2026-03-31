@@ -1,0 +1,1 @@
+const s="Cheesy shadow picker 2.0",e="Interactive ai2html studio to move labels and assign production-ready text shadows.",t="https://luissevillano.net/cheesy-shadow-picker/index.html",o="https://luissevillano.net/cheesy-shadow-picker/cover.jpg",a="#ffffff",i="#000000";export{e as a,t as b,o as c,i as d,a as m,s};
