@@ -358,14 +358,19 @@
 	.tool-button {
 		display: inline-flex;
 		align-items: center;
-		height: 28px;
-		padding: 0 0.5rem;
+		justify-content: center;
+		min-height: 32px;
+		height: auto;
+		padding: 0.35rem 0.6rem;
 		border: 1px solid var(--brand-dark);
 		background: var(--brand-dark);
 		color: #fff;
 		font-size: 0.69rem;
 		font-weight: 600;
+		line-height: 1.2;
+		box-sizing: border-box;
 		cursor: pointer;
+		text-align: left;
 	}
 
 	.sample-button {

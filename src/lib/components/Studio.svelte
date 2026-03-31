@@ -975,7 +975,7 @@
 
 	@media (min-width: 980px) {
 		.studio {
-			grid-template-columns: 256px minmax(0, 1fr) 200px;
+			grid-template-columns: 300px minmax(0, 1fr) 200px;
 			align-items: stretch;
 		}
 
