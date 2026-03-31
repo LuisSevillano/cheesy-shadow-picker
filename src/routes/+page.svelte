@@ -52,6 +52,7 @@
 		display: flex;
 		flex-direction: column;
 		gap: 0;
+		overflow: hidden;
 	}
 
 	.topbar {
@@ -121,5 +122,6 @@
 		display: grid;
 		flex: 1;
 		min-height: 0;
+		overflow: hidden;
 	}
 </style>
