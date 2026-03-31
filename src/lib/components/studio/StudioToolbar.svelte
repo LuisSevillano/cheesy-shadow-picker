@@ -11,6 +11,8 @@
 		workspaceImage = '',
 		htmlFileName = '',
 		imageFileName = '',
+		onLoadSample = () => {},
+		previewOriginal = $bindable(false),
 		textColor = $bindable('#000000'),
 		shadowColor = $bindable('#000000'),
 		cssClassName = '',
@@ -64,24 +66,29 @@
 				<small>Drop .html here or use the button below.</small>
 			</div>
 		</div>
-		<label class="tool-button" for="ai2html-input">Load ai2html</label>
-		<input
-			id="ai2html-input"
-			name="ai2html"
-			type="file"
-			accept=".html,text/html"
-			autocomplete="off"
-			onchange={onAi2htmlInput}
-		/>
-		<label class="tool-button" for="image-input">Load Image</label>
-		<input
-			id="image-input"
-			name="background-image"
-			type="file"
-			accept="image/*"
-			autocomplete="off"
-			onchange={onImageInput}
-		/>
+		<div class="import-actions">
+			<label class="tool-button" for="ai2html-input">Load ai2html</label>
+			<input
+				id="ai2html-input"
+				name="ai2html"
+				type="file"
+				accept=".html,text/html"
+				autocomplete="off"
+				onchange={onAi2htmlInput}
+			/>
+			<label class="tool-button" for="image-input">Load Image</label>
+			<input
+				id="image-input"
+				name="background-image"
+				type="file"
+				accept="image/*"
+				autocomplete="off"
+				onchange={onImageInput}
+			/>
+			<button type="button" class="tool-button sample-button" onclick={onLoadSample}>
+				Load sample
+			</button>
+		</div>
 		{#if htmlFileName || imageFileName}
 			<p class="active-file">{htmlFileName || imageFileName}</p>
 		{/if}
@@ -114,6 +121,14 @@
 			<button type="button" onclick={onApplyShadowToAll} disabled={!labelsCount}
 				>Apply Shadow to All</button
 			>
+			<button
+				type="button"
+				class={`preview-toggle ${previewOriginal ? 'is-active' : ''}`}
+				onclick={() => (previewOriginal = !previewOriginal)}
+				disabled={!labelsCount}
+			>
+				{previewOriginal ? 'Show Edited' : 'Show Original'}
+			</button>
 		</div>
 	</div>
 </section>
@@ -303,6 +318,12 @@
 		background: transparent;
 	}
 
+	.import-actions {
+		display: flex;
+		align-items: center;
+		gap: 0.35rem;
+	}
+
 	.dropzone-inline {
 		display: flex;
 		align-items: center;
@@ -347,6 +368,17 @@
 		cursor: pointer;
 	}
 
+	.sample-button {
+		border-color: var(--panel-border);
+		background: transparent;
+		color: var(--text-secondary);
+	}
+
+	.sample-button:hover {
+		background: var(--app-bg);
+		filter: none;
+	}
+
 	.active-file {
 		font-size: 0.74rem;
 		color: var(--text-secondary);
@@ -359,13 +391,6 @@
 		gap: 0.45rem;
 	}
 
-	.select-wrap {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.3rem;
-	}
-
-	.select-wrap span,
 	.metric {
 		font-size: 0.72rem;
 		color: var(--text-secondary);
@@ -627,11 +652,20 @@
 	}
 
 	button:focus-visible,
-	select:focus-visible,
 	input:focus-visible,
 	.tool-button:focus-visible {
 		outline: 2px solid var(--brand-accent);
 		outline-offset: 1px;
+	}
+
+	button.preview-toggle {
+		background: transparent;
+		font-size: 0.68rem;
+	}
+
+	button.preview-toggle.is-active {
+		border-color: var(--brand-dark);
+		color: var(--brand-dark);
 	}
 
 	.reset-button {
@@ -650,5 +684,34 @@
 		width: 14px;
 		height: 14px;
 		fill: currentColor;
+	}
+
+	@media (max-width: 600px) {
+		.import-row {
+			display: grid;
+			gap: 0.4rem;
+		}
+
+		.import-actions {
+			display: grid;
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+			gap: 0.4rem;
+			width: 100%;
+		}
+
+		.import-actions .tool-button {
+			justify-content: center;
+			width: 100%;
+		}
+
+		.appearance-row {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			align-items: start;
+		}
+
+		.appearance-block + .appearance-block {
+			padding-top: 0;
+			border-top: 0;
+		}
 	}
 </style>

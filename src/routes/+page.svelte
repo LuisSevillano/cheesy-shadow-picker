@@ -1,7 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
 	import Studio from '$lib/components/Studio.svelte';
-	import Ai2htmlSample from '$lib/components/Ai2htmlSample.svelte';
 	import sampleAi2htmlContent from '$lib/components/Ai2htmlSample.html?raw';
 
 	let sampleLoaded = $state(false);
@@ -28,13 +27,10 @@
 			</div>
 		</div>
 		<div class="top-divider" aria-hidden="true"></div>
-		<div class="header-hint">
-			<Ai2htmlSample onLoad={loadSample} />
-		</div>
 	</header>
 
 	<section class="studio-shell">
-		<Studio sampleMode={sampleLoaded} sampleHtml={sampleAi2htmlContent} />
+		<Studio sampleMode={sampleLoaded} sampleHtml={sampleAi2htmlContent} onLoadSample={loadSample} />
 	</section>
 </main>
 
@@ -112,10 +108,6 @@
 		width: 1px;
 		height: 20px;
 		background: var(--panel-border);
-	}
-
-	.header-hint {
-		font-size: 0.72rem;
 	}
 
 	.studio-shell {
