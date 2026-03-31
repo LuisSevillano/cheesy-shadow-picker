@@ -30,6 +30,7 @@
 	let imagePreview = $state('');
 	let imageAspectRatio = $state(16 / 9);
 	let imageNaturalWidth = $state(1200);
+	let imageNaturalHeight = $state(0);
 	let rootId = $state('');
 	let rootClassName = $state('ai2html');
 
@@ -202,6 +203,7 @@
 			imageElement.onload = () => {
 				if (imageElement.naturalWidth && imageElement.naturalHeight) {
 					imageNaturalWidth = imageElement.naturalWidth;
+					imageNaturalHeight = imageElement.naturalHeight;
 					imageAspectRatio = imageElement.naturalWidth / imageElement.naturalHeight;
 				}
 			};
@@ -209,6 +211,13 @@
 		};
 
 		reader.readAsDataURL(file);
+	}
+
+	function handleImageLoad(event) {
+		const img = event.target;
+		if (img.naturalHeight) {
+			imageNaturalHeight = img.naturalHeight;
+		}
 	}
 
 	function handleArtboardSelection(event) {
@@ -602,7 +611,7 @@
 										loading="eager"
 										fetchpriority="high"
 										width={stageWidth}
-										height={stageHeight}
+										onload={handleImageLoad}
 									/>
 
 									{#each labels as label (label.id)}
@@ -633,7 +642,6 @@
 										loading="eager"
 										fetchpriority="high"
 										width={stageWidth}
-										height={stageHeight}
 									/>
 									{#each labels as label (label.id)}
 										<button
@@ -687,8 +695,9 @@
 	.studio {
 		display: grid;
 		gap: 0;
-		align-items: start;
+		align-items: stretch;
 		height: 100%;
+		min-height: 0;
 		background: var(--canvas-bg);
 	}
 
@@ -707,14 +716,15 @@
 	}
 
 	.right-sidebar {
-		overflow: hidden;
+		overflow: auto;
 		background: var(--sidebar-bg);
 		border-left: 1px solid var(--panel-border);
+		min-width: 0;
 	}
 
 	.workspace-column {
 		display: grid;
-		grid-template-rows: auto minmax(0, 1fr);
+		grid-template-rows: auto 1fr;
 		gap: 0;
 		align-content: start;
 		min-width: 0;
@@ -723,10 +733,21 @@
 	}
 
 	.workspace-shell {
+		display: flex;
+		flex-direction: column;
 		border: 0;
 		background: transparent;
 		padding: 0;
 		min-height: 0;
+		overflow: auto;
+	}
+
+	.stage-host {
+		position: sticky;
+		top: 0;
+		z-index: 1;
+		background: var(--workspace-bg, #f5f5f5);
+		padding: 0.5rem;
 	}
 
 	.workspace-scroll {
@@ -835,7 +856,7 @@
 		}
 
 		.left-sidebar {
-			overflow-x: auto;
+			overflow-x: hidden;
 		}
 
 		.right-sidebar {
@@ -883,7 +904,7 @@
 	@media (min-width: 980px) {
 		.studio {
 			grid-template-columns: 256px minmax(0, 1fr) 200px;
-			align-items: start;
+			align-items: stretch;
 		}
 
 		.left-sidebar {
