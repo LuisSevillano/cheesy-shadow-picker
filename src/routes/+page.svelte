@@ -1,85 +1,125 @@
 <script>
-	import Shadows from '$lib/components/Shadows.svelte';
-	import { siteTitle, siteDescription } from '$lib/config';
-	import Drop from '$lib/components/Drop.svelte';
+	import { onMount } from 'svelte';
+	import Studio from '$lib/components/Studio.svelte';
+	import Ai2htmlSample from '$lib/components/Ai2htmlSample.svelte';
+	import sampleAi2htmlContent from '$lib/components/Ai2htmlSample.html?raw';
+
+	let sampleLoaded = $state(false);
+
+	onMount(() => {
+		const url = new URL(window.location.href);
+		if (url.searchParams.get('sample') === '1') {
+			sampleLoaded = true;
+		}
+	});
+
+	function loadSample() {
+		sampleLoaded = true;
+	}
 </script>
 
-<main>
-	<header>
-		<h1>{siteTitle}</h1>
-		<h3>{siteDescription}</h3>
+<main id="main-content" class="page is-studio">
+	<header class="topbar">
+		<div class="brand">
+			<div class="brand-mark">S</div>
+			<div class="brand-copy">
+				<p class="kicker">Cheesy Shadow Picker</p>
+				<p class="version">2.0</p>
+			</div>
+		</div>
+		<div class="top-divider" aria-hidden="true"></div>
+		<div class="header-hint">
+			<Ai2htmlSample onLoad={loadSample} />
+		</div>
 	</header>
 
-	<Shadows />
-	<p>
-		Optionally, you can upload an image, for example a satellite image or a map, to find the shadow
-		that best suits your needs.
-	</p>
-	<Drop />
-	<div>
-		<p>
-			This shadows have been collected from media like The New York Times, Washington Post, Reuters
-			Graphics, Propublica, Bloomberg or El País. Some of them have been slightly modified to fit
-			the default black/white scheme. This feature is especially useful in combination with <a
-				href="http://ai2html.org/">ai2html</a
-			> or for highlighting text on any kind of graphic, map or photo.
-		</p>
-		<p>
-			You can change text color or shadow color, the background or even invert that configuration.
-			Click on a shadow block to copy that shadow to your clipboard.
-		</p>
-		<p>
-			Feel free to suggest your own shadows to make this collection bigger or make a <a
-				href="https://github.com/luissevillano/cheesy-shadow-picker">fork</a
-			> to improve it.
-		</p>
-	</div>
+	<section class="studio-shell">
+		<Studio sampleMode={sampleLoaded} sampleHtml={sampleAi2htmlContent} />
+	</section>
 </main>
 
 <style>
-	header {
-		padding: 1rem 0;
-		padding-top: 1.5rem;
+	.page {
+		display: grid;
+		gap: 0.75rem;
+	}
+
+	.page.is-studio {
+		max-width: none;
+		margin: 0;
+		padding: 0;
+		height: 100dvh;
 		display: flex;
-		flex-wrap: wrap;
-		justify-content: space-between;
-		position: relative;
-		margin-bottom: 2rem;
+		flex-direction: column;
+		gap: 0;
 	}
-	@media (min-width: 830px) {
-		header {
-			width: auto;
-		}
+
+	.topbar {
+		display: flex;
+		align-items: center;
+		gap: 0.65rem;
+		height: 44px;
+		padding: 0 1rem;
+		border-bottom: 1px solid var(--panel-border);
+		background: var(--toolbar-bg);
+		flex-shrink: 0;
 	}
-	h1,
-	h3 {
-		display: block;
-		width: 100%;
-		max-width: 50rem;
-		margin: 0 auto;
-		text-shadow:
-			0px 0px 1px #ffffff,
-			0px 0px 2px #ffffff,
-			0px 0px 3px #ffffff,
-			0px 0px 4px #ffffff;
+
+	.brand {
+		display: flex;
+		align-items: center;
+		gap: 0.45rem;
+		flex-shrink: 0;
 	}
-	h3 {
-		font-weight: lighter;
+
+	.brand-mark {
+		display: grid;
+		place-items: center;
+		width: 24px;
+		height: 24px;
+		font-size: 0.72rem;
+		font-weight: 800;
+		background: var(--brand-dark);
+		color: #fff;
 	}
-	main::before {
-		content: '';
-		background-image: url(/cheese.svg);
-		background-repeat: no-repeat;
-		overflow: visible;
-		width: 250px;
-		height: 100px;
-		position: absolute;
-		right: 0px;
-		top: 0px;
-		z-index: -1;
+
+	.brand-copy {
+		display: grid;
+		gap: 0.08rem;
+		line-height: 1;
 	}
-	div {
-		border-top: 1px solid rgb(200, 200, 200);
-		margin-top: 2rem;
+
+	.kicker,
+	.version {
+		margin: 0;
+	}
+
+	.kicker {
+		font-size: 0.58rem;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		color: var(--text-muted);
+	}
+
+	.version {
+		font-size: 0.7rem;
+		font-weight: 700;
+		color: var(--text-primary);
+	}
+
+	.top-divider {
+		width: 1px;
+		height: 20px;
+		background: var(--panel-border);
+	}
+
+	.header-hint {
+		font-size: 0.72rem;
+	}
+
+	.studio-shell {
+		display: grid;
+		flex: 1;
+		min-height: 0;
 	}
 </style>
