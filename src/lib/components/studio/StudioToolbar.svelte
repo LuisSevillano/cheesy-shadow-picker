@@ -51,21 +51,11 @@
 	<div
 		class="toolbar-row import-row"
 		role="region"
-		aria-label="ai2html import zone"
+		aria-label="ai2html and image import zone"
 		ondragover={handleDragOver}
 		ondrop={onAi2htmlDrop}
 	>
-		<div class="dropzone-inline">
-			<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-				<path d="M0 0h24v24H0z" fill="none"></path>
-				<path d="M5 20h14v-2H5zm7-16-5.5 5.5 1.42 1.42L11 8.84V16h2V8.84l3.08 3.08 1.42-1.42z"
-				></path>
-			</svg>
-			<div>
-				<strong>Drop Zone ai2html</strong>
-				<small>Drop .html here or use the button below.</small>
-			</div>
-		</div>
+		<p class="import-hint">Drag .html or image to the main workspace</p>
 		<div class="import-actions">
 			<label class="tool-button" for="ai2html-input">Load ai2html</label>
 			<input
@@ -318,37 +308,17 @@
 		background: transparent;
 	}
 
+	.import-hint {
+		margin: 0;
+		font-size: 0.68rem;
+		line-height: 1.2;
+		color: var(--text-muted);
+	}
+
 	.import-actions {
 		display: flex;
 		align-items: center;
 		gap: 0.35rem;
-	}
-
-	.dropzone-inline {
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-		padding: 0.4rem 0.5rem;
-		border: 1px dashed var(--brand-mid);
-		background: #fff;
-		min-height: 40px;
-	}
-
-	.dropzone-inline svg {
-		width: 18px;
-		height: 18px;
-		fill: var(--brand-mid);
-	}
-
-	.dropzone-inline strong,
-	.dropzone-inline small {
-		display: block;
-		font-size: 0.7rem;
-		line-height: 1.2;
-	}
-
-	.dropzone-inline strong {
-		font-size: 0.75rem;
 	}
 
 	.toolbar input[type='file'] {

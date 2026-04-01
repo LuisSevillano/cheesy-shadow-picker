@@ -165,20 +165,7 @@
 		event.preventDefault();
 	}
 
-	function handleAi2htmlDrop(event) {
-		event.preventDefault();
-		const [file] = event.dataTransfer.files || [];
-		if (!file) {
-			return;
-		}
-
-		if (file.name.endsWith('.html') || file.type.includes('html') || file.type.includes('text')) {
-			loadAi2htmlFile(file);
-		}
-	}
-
-	function handleImageInput(event) {
-		const [file] = event.currentTarget.files || [];
+	function loadImageFile(file) {
 		if (!file || !file.type.startsWith('image/')) {
 			return;
 		}
@@ -206,6 +193,32 @@
 		};
 
 		reader.readAsDataURL(file);
+	}
+
+	function handleDroppedFile(file) {
+		if (!file) {
+			return;
+		}
+
+		if (file.type.startsWith('image/')) {
+			loadImageFile(file);
+			return;
+		}
+
+		if (file.name.endsWith('.html') || file.type.includes('html') || file.type.includes('text')) {
+			loadAi2htmlFile(file);
+		}
+	}
+
+	function handleAi2htmlDrop(event) {
+		event.preventDefault();
+		const [file] = event.dataTransfer.files || [];
+		handleDroppedFile(file);
+	}
+
+	function handleImageInput(event) {
+		const [file] = event.currentTarget.files || [];
+		loadImageFile(file);
 	}
 
 	function handleImageLoad(event) {
@@ -634,7 +647,7 @@
 								<div
 									class="workspace-empty"
 									role="region"
-									aria-label="Drop zone for ai2html files"
+									aria-label="Drop zone for ai2html or image files"
 									ondragover={handleDragOver}
 									ondrop={handleAi2htmlDrop}
 								>
@@ -666,7 +679,7 @@
 				<div
 					class="workspace-empty"
 					role="region"
-					aria-label="Drop zone for ai2html files"
+					aria-label="Drop zone for ai2html or image files"
 					ondragover={handleDragOver}
 					ondrop={handleAi2htmlDrop}
 				>
@@ -675,7 +688,7 @@
 						<path d="M5 20h14v-2H5zm7-16-5.5 5.5 1.42 1.42L11 8.84V16h2V8.84l3.08 3.08 1.42-1.42z"
 						></path>
 					</svg>
-					<p>Drag & drop your ai2html file here</p>
+					<p>Drag & drop your ai2html or image file here</p>
 					<p class="empty-hint">or use the buttons in the toolbar</p>
 				</div>
 			{/if}
