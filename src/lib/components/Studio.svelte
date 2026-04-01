@@ -20,7 +20,7 @@
 	const { copyToClipboard } = utils;
 	const defaultShadowRaw = shadowsCatalog[0]?.shadow || '';
 
-	let { sampleMode = false, sampleHtml = '' } = $props();
+	let { sampleMode = false, sampleHtml = '', onLoadSample = () => {} } = $props();
 
 	let stageRef = $state();
 	let importCss = $state('');
@@ -28,9 +28,7 @@
 	let htmlFileName = $state('');
 	let imageFileName = $state('');
 	let imagePreview = $state('');
-	let imageAspectRatio = $state(16 / 9);
 	let imageNaturalWidth = $state(1200);
-	let imageNaturalHeight = $state(0);
 	let rootId = $state('');
 	let rootClassName = $state('ai2html');
 
@@ -42,6 +40,7 @@
 	let selectedShadowRaw = $state(defaultShadowRaw);
 	let textColor = $state(mainTextColorDef);
 	let shadowColor = $state(mainShadowColorDef);
+	let previewOriginal = $state(false);
 
 	let dragState = $state(null);
 	let importedStyleNode = $state();
@@ -58,9 +57,7 @@
 	);
 	const activeShadow = $derived(recolorShadow(selectedShadowRaw, shadowColor));
 	const workspaceImage = $derived(selectedArtboard?.imageSrc || imagePreview);
-	const workspaceRatio = $derived(selectedArtboard?.aspectRatio || imageAspectRatio || 16 / 9);
 	const stageWidth = $derived(getNativeArtboardWidth(selectedArtboard, imageNaturalWidth));
-	const stageHeight = $derived(Math.round(stageWidth / workspaceRatio));
 	const cssClassNameValid = $derived(cssClassNameRegex.test(cssClassName));
 	const defaultRuleShadow = $derived(selectedLabel?.shadow || activeShadow || '');
 	const currentRulePreview = $derived(
@@ -203,8 +200,6 @@
 			imageElement.onload = () => {
 				if (imageElement.naturalWidth && imageElement.naturalHeight) {
 					imageNaturalWidth = imageElement.naturalWidth;
-					imageNaturalHeight = imageElement.naturalHeight;
-					imageAspectRatio = imageElement.naturalWidth / imageElement.naturalHeight;
 				}
 			};
 			imageElement.src = reader.result;
@@ -215,8 +210,8 @@
 
 	function handleImageLoad(event) {
 		const img = event.target;
-		if (img.naturalHeight) {
-			imageNaturalHeight = img.naturalHeight;
+		if (img.naturalWidth) {
+			imageNaturalWidth = img.naturalWidth;
 		}
 	}
 
@@ -522,11 +517,11 @@
 			}
 		}
 
-		if (label.shadow) {
+		if (!previewOriginal && label.shadow) {
 			styleParts.push(`--editor-shadow: ${label.shadow}`);
 		}
 
-		if (label.textColor) {
+		if (!previewOriginal && label.textColor) {
 			styleParts.push(`--editor-text-color: ${label.textColor}`);
 		}
 
@@ -542,44 +537,51 @@
 
 <section class="studio">
 	<aside class="left-sidebar">
-		<StudioToolbar
-			{artboards}
-			bind:selectedArtboardId
-			{stageWidth}
-			labelsCount={labels.length}
-			{selectedLabel}
-			{activeShadow}
-			{workspaceImage}
-			{htmlFileName}
-			{imageFileName}
-			bind:textColor
-			bind:shadowColor
-			{cssClassName}
-			{cssClassNameValid}
-			{currentRulePreview}
-			{cssSheetPreview}
-			{cssRules}
-			{canUseEyeDropper}
-			onAi2htmlDrop={handleAi2htmlDrop}
-			onAi2htmlInput={handleAi2htmlInput}
-			onImageInput={handleImageInput}
-			onArtboardChange={handleArtboardSelection}
-			onApplyShadowToAll={applyShadowToAll}
-			onApplyTextToSelected={applyTextToSelected}
-			onApplyTextToAll={applyTextToAll}
-			onClearTextColors={clearTextColors}
-			onTextColorLive={handleTextColorLive}
-			onPickTextColor={() => pickColor('text')}
-			onRecolorSelectedShadow={recolorSelectedShadow}
-			onClearSelectedShadow={clearSelectedShadow}
-			onCopyCurrentShadow={copyCurrentShadow}
-			onShadowColorLive={handleShadowColorLive}
-			onPickShadowColor={() => pickColor('shadow')}
-			onCssClassNameInput={handleCssClassNameInput}
-			onAddRuleToSheet={addRuleToSheet}
-			onCopyCssSheet={copyCssSheet}
-			onClearCssSheet={clearCssSheet}
-		/>
+		<details class="mobile-tools" open>
+			<summary>Tools</summary>
+			<div class="mobile-tools-body">
+				<StudioToolbar
+					{artboards}
+					bind:selectedArtboardId
+					{stageWidth}
+					labelsCount={labels.length}
+					{selectedLabel}
+					{activeShadow}
+					{workspaceImage}
+					{htmlFileName}
+					{imageFileName}
+					{onLoadSample}
+					bind:previewOriginal
+					bind:textColor
+					bind:shadowColor
+					{cssClassName}
+					{cssClassNameValid}
+					{currentRulePreview}
+					{cssSheetPreview}
+					{cssRules}
+					{canUseEyeDropper}
+					onAi2htmlDrop={handleAi2htmlDrop}
+					onAi2htmlInput={handleAi2htmlInput}
+					onImageInput={handleImageInput}
+					onArtboardChange={handleArtboardSelection}
+					onApplyShadowToAll={applyShadowToAll}
+					onApplyTextToSelected={applyTextToSelected}
+					onApplyTextToAll={applyTextToAll}
+					onClearTextColors={clearTextColors}
+					onTextColorLive={handleTextColorLive}
+					onPickTextColor={() => pickColor('text')}
+					onRecolorSelectedShadow={recolorSelectedShadow}
+					onClearSelectedShadow={clearSelectedShadow}
+					onCopyCurrentShadow={copyCurrentShadow}
+					onShadowColorLive={handleShadowColorLive}
+					onPickShadowColor={() => pickColor('shadow')}
+					onCssClassNameInput={handleCssClassNameInput}
+					onAddRuleToSheet={addRuleToSheet}
+					onCopyCssSheet={copyCssSheet}
+					onClearCssSheet={clearCssSheet}
+				/>
+			</div>
+		</details>
 	</aside>
 
 	<div class="workspace-column">
@@ -715,6 +717,18 @@
 		border-right: 1px solid var(--panel-border);
 	}
 
+	.mobile-tools {
+		border: 0;
+	}
+
+	.mobile-tools-body {
+		display: contents;
+	}
+
+	.mobile-tools > summary {
+		display: none;
+	}
+
 	.right-sidebar {
 		overflow: auto;
 		background: var(--sidebar-bg);
@@ -847,7 +861,8 @@
 	@media (max-width: 979px) {
 		.studio {
 			grid-template-columns: minmax(0, 1fr);
-			grid-template-rows: auto 1fr auto;
+			grid-template-rows: auto auto auto;
+			overflow: auto;
 		}
 
 		.left-sidebar,
@@ -856,7 +871,54 @@
 		}
 
 		.left-sidebar {
-			overflow-x: hidden;
+			position: sticky;
+			top: 0;
+			z-index: 5;
+			overflow: visible;
+			border-left: 0;
+			border-right: 0;
+		}
+
+		.mobile-tools {
+			border-bottom: 1px solid var(--panel-border);
+			background: var(--panel-bg);
+		}
+
+		.mobile-tools > summary {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 0.35rem 0.75rem;
+			min-height: 34px;
+			font-size: 0.68rem;
+			font-weight: 700;
+			letter-spacing: 0.04em;
+			text-transform: uppercase;
+			color: var(--text-primary);
+			cursor: pointer;
+			list-style: none;
+		}
+
+		.mobile-tools > summary::-webkit-details-marker {
+			display: none;
+		}
+
+		.mobile-tools > summary::after {
+			content: '+';
+			font-size: 0.95rem;
+			line-height: 1;
+		}
+
+		.mobile-tools[open] > summary::after {
+			content: '\2212';
+		}
+
+		.mobile-tools[open] .mobile-tools-body {
+			display: block;
+			max-height: min(30vh, 420px);
+			overflow: auto;
+			overscroll-behavior: contain;
+			border-bottom: 1px solid var(--panel-border);
 		}
 
 		.right-sidebar {
@@ -864,8 +926,13 @@
 		}
 
 		.workspace-column {
-			min-height: 45vh;
-			order: -1;
+			min-height: clamp(140px, 28vh, 280px);
+			order: 0;
+		}
+
+		.workspace-scroll {
+			max-height: 40vh;
+			overflow: auto;
 		}
 
 		.workspace-scroll {
@@ -874,6 +941,11 @@
 
 		.stage-host {
 			max-width: 100%;
+		}
+
+		.workspace-empty {
+			min-height: 120px;
+			padding: 1rem 0.75rem;
 		}
 	}
 
@@ -903,8 +975,18 @@
 
 	@media (min-width: 980px) {
 		.studio {
-			grid-template-columns: 256px minmax(0, 1fr) 200px;
+			grid-template-columns: 300px minmax(0, 1fr) 200px;
 			align-items: stretch;
+		}
+
+		.mobile-tools {
+			height: 100%;
+		}
+
+		.mobile-tools:not([open]) > .mobile-tools-body {
+			display: block;
+			max-height: none;
+			overflow: visible;
 		}
 
 		.left-sidebar {

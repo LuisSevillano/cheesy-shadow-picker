@@ -9,7 +9,7 @@
 		display: inline;
 		border: none;
 		background: transparent;
-		color: var(--brand-accent);
+		color: var(--text-muted);
 		font-size: 0.75rem;
 		font-weight: 400;
 		cursor: pointer;
