@@ -329,16 +329,16 @@
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		min-height: 32px;
 		height: auto;
 		padding: 0.35rem 0.6rem;
-		border: 1px solid var(--brand-dark);
-		background: var(--brand-dark);
+		border: 1px solid var(--brand-mid);
+		background: var(--brand-mid);
 		color: #fff;
 		font-size: 0.69rem;
 		font-weight: 600;
 		line-height: 1.2;
 		box-sizing: border-box;
+		border-radius: 4px;
 		cursor: pointer;
 		text-align: left;
 	}
@@ -394,7 +394,7 @@
 		border: 1px solid var(--panel-border);
 		background: var(--panel-bg);
 		color: var(--text-primary);
-		border-radius: 3px;
+		border-radius: 4px;
 		white-space: nowrap;
 	}
 
@@ -403,9 +403,9 @@
 	}
 
 	.artboard-btn.is-active {
-		background: var(--brand-dark);
+		background: var(--brand-mid);
 		color: #fff;
-		border-color: var(--brand-dark);
+		border-color: var(--brand-mid);
 	}
 
 	.metric {
@@ -606,8 +606,8 @@
 	}
 
 	.action-row button:first-child {
-		border-color: var(--brand-dark);
-		background: var(--brand-dark);
+		border-color: var(--brand-mid);
+		background: var(--brand-mid);
 		color: #fff;
 	}
 
@@ -618,7 +618,7 @@
 
 	.tool-button:hover {
 		background: var(--brand-dark);
-		filter: brightness(1.06);
+		filter: none;
 	}
 
 	button:disabled {

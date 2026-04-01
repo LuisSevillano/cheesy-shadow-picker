@@ -44,3 +44,6 @@ input,
 select {
 	font: inherit;
 }
+.g-aiImg {
+	pointer-events: none;
+}

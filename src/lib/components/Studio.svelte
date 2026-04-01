@@ -23,8 +23,10 @@
 	let { sampleMode = false, sampleHtml = '', onLoadSample = () => {} } = $props();
 
 	let stageRef = $state();
+	let workspaceColumnRef = $state();
 	let importCss = $state('');
 	let parseError = $state('');
+	let imageLoadError = $state('');
 	let htmlFileName = $state('');
 	let imageFileName = $state('');
 	let imagePreview = $state('');
@@ -43,6 +45,7 @@
 	let previewOriginal = $state(false);
 
 	let dragState = $state(null);
+	let isDragOver = $state(false);
 	let importedStyleNode = $state();
 	let canUseEyeDropper = $state(false);
 	let cssClassName = $state('');
@@ -100,6 +103,7 @@
 
 	async function loadAi2htmlContent(htmlContent, fileName = '') {
 		parseError = '';
+		imageLoadError = '';
 
 		try {
 			const parsed = parseAi2htmlDocument(htmlContent);
@@ -112,11 +116,23 @@
 			imagePreview = '';
 			imageFileName = '';
 
-			const viewportWidth = typeof window !== 'undefined' ? window.innerWidth : 1200;
-			setArtboard(pickBestArtboard(parsed.artboards, viewportWidth) || parsed.artboards[0]);
+			const availableWidth = getAvailableArtboardWidth();
+			setArtboard(pickBestArtboard(parsed.artboards, availableWidth) || parsed.artboards[0]);
 		} catch (error) {
 			parseError = error instanceof Error ? error.message : 'Could not read ai2html file.';
 		}
+	}
+
+	function getAvailableArtboardWidth() {
+		if (workspaceColumnRef?.clientWidth) {
+			return workspaceColumnRef.clientWidth;
+		}
+
+		if (typeof window !== 'undefined') {
+			return Math.max(300, window.innerWidth - 24);
+		}
+
+		return 1200;
 	}
 
 	onDestroy(() => {
@@ -142,6 +158,7 @@
 			return;
 		}
 
+		imageLoadError = '';
 		selectedArtboardId = artboard.id;
 		labels = cloneLabels(artboard.labels || []);
 		activeLabelId = labels[0]?.id || '';
@@ -163,6 +180,18 @@
 
 	function handleDragOver(event) {
 		event.preventDefault();
+	}
+
+	function handleWorkspaceDragOver(event) {
+		event.preventDefault();
+		isDragOver = true;
+	}
+
+	function handleWorkspaceDragLeave(event) {
+		if (event.currentTarget.contains(event.relatedTarget)) {
+			return;
+		}
+		isDragOver = false;
 	}
 
 	function loadImageFile(file) {
@@ -212,6 +241,7 @@
 
 	function handleAi2htmlDrop(event) {
 		event.preventDefault();
+		isDragOver = false;
 		const [file] = event.dataTransfer.files || [];
 		handleDroppedFile(file);
 	}
@@ -226,6 +256,12 @@
 		if (img.naturalWidth) {
 			imageNaturalWidth = img.naturalWidth;
 		}
+		imageLoadError = '';
+	}
+
+	function handleImageError() {
+		const src = selectedArtboard?.imageSrc || 'Unknown file';
+		imageLoadError = `Could not load artboard image (${src}). Export/upload image assets and try again.`;
 	}
 
 	function handleArtboardSelection(event) {
@@ -475,16 +511,25 @@
 		event.stopPropagation();
 		selectLabel(label.id);
 
+		const stageRect = stageRef.getBoundingClientRect();
+		const labelRect = event.currentTarget.getBoundingClientRect();
+		const startTopFromLayout = stageRect.height
+			? ((labelRect.top - stageRect.top) / stageRect.height) * 100
+			: 0;
+		const startLeftFromLayout = stageRect.width
+			? ((labelRect.left - stageRect.left) / stageRect.width) * 100
+			: 0;
 		const styleMap = label.styleMap || {};
-		const rect = stageRef.getBoundingClientRect();
+		const parsedTop = parseFloat(styleMap.top);
+		const parsedLeft = parseFloat(styleMap.left);
 		dragState = {
 			id: label.id,
 			startX: event.clientX,
 			startY: event.clientY,
-			startTop: parseFloat(styleMap.top) || 0,
-			startLeft: parseFloat(styleMap.left) || 0,
-			width: rect.width,
-			height: rect.height
+			startTop: Number.isFinite(parsedTop) ? parsedTop : startTopFromLayout,
+			startLeft: Number.isFinite(parsedLeft) ? parsedLeft : startLeftFromLayout,
+			width: stageRect.width,
+			height: stageRect.height
 		};
 
 		document.body.classList.add('dragging-labels');
@@ -597,15 +642,33 @@
 		</details>
 	</aside>
 
-	<div class="workspace-column">
+	<div
+		class={`workspace-column ${isDragOver ? 'is-dragover' : ''}`}
+		bind:this={workspaceColumnRef}
+		role="region"
+		aria-label="Main workspace drop zone"
+		ondragover={handleWorkspaceDragOver}
+		ondragleave={handleWorkspaceDragLeave}
+		ondrop={handleAi2htmlDrop}
+	>
 		{#if parseError}
 			<p class="error">{parseError}</p>
 		{/if}
 
-		<div class="workspace-shell">
+		<div
+			class={`workspace-shell ${isDragOver ? 'is-dragover' : ''}`}
+			role="region"
+			aria-label="Workspace drop zone"
+			ondragover={handleWorkspaceDragOver}
+			ondragleave={handleWorkspaceDragLeave}
+			ondrop={handleAi2htmlDrop}
+		>
 			{#if workspaceImage}
 				<div class="workspace-scroll">
-					<div class="stage-host" style={`width:${stageWidth}px;`}>
+					{#if imageLoadError}
+						<p class="image-warning" role="alert">{imageLoadError}</p>
+					{/if}
+					<div class="stage-host" style={`max-width:${stageWidth}px;`}>
 						<div id={rootId || 'ai2html-root'} class={`${rootClassName || 'ai2html'} editor-root`}>
 							{#if selectedArtboard}
 								<div
@@ -617,6 +680,10 @@
 								>
 									{#if selectedArtboard.paddingStyle}
 										<div style={selectedArtboard.paddingStyle}></div>
+									{:else if imageLoadError}
+										<div
+											style={`padding: 0 0 ${100 / (selectedArtboard.aspectRatio || 1.6)}% 0;`}
+										></div>
 									{/if}
 									<img
 										id={selectedArtboard.imageId}
@@ -627,6 +694,7 @@
 										fetchpriority="high"
 										width={stageWidth}
 										onload={handleImageLoad}
+										onerror={handleImageError}
 									/>
 
 									{#each labels as label (label.id)}
@@ -657,6 +725,7 @@
 										loading="eager"
 										fetchpriority="high"
 										width={stageWidth}
+										onerror={handleImageError}
 									/>
 									{#each labels as label (label.id)}
 										<button
@@ -683,10 +752,20 @@
 					ondragover={handleDragOver}
 					ondrop={handleAi2htmlDrop}
 				>
-					<svg class="empty-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-						<path d="M0 0h24v24H0z" fill="none"></path>
-						<path d="M5 20h14v-2H5zm7-16-5.5 5.5 1.42 1.42L11 8.84V16h2V8.84l3.08 3.08 1.42-1.42z"
-						></path>
+					<svg
+						class="empty-icon"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="1.8"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						aria-hidden="true"
+						focusable="false"
+					>
+						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+						<polyline points="17 8 12 3 7 8"></polyline>
+						<line x1="12" y1="3" x2="12" y2="15"></line>
 					</svg>
 					<p>Drag & drop your ai2html or image file here</p>
 					<p class="empty-hint">or use the buttons in the toolbar</p>
@@ -730,6 +809,11 @@
 		border-right: 1px solid var(--panel-border);
 	}
 
+	.workspace-column.is-dragover,
+	.workspace-column.is-dragover {
+		background: color-mix(in srgb, var(--canvas-bg) 88%, white 12%);
+	}
+
 	.mobile-tools {
 		border: 0;
 	}
@@ -769,18 +853,36 @@
 		overflow: auto;
 	}
 
+	.workspace-shell.is-dragover {
+		outline: 2px dashed var(--brand-mid);
+		outline-offset: -6px;
+		background: color-mix(in srgb, var(--canvas-bg) 82%, white 18%);
+	}
+
 	.stage-host {
 		position: sticky;
 		top: 0;
 		z-index: 1;
+		width: 100%;
 		background: var(--workspace-bg, #f5f5f5);
-		padding: 0.5rem;
+		padding: 0;
+		box-sizing: border-box;
 	}
 
 	.workspace-scroll {
 		overflow: auto;
 		height: 100%;
-		padding: 0.75rem;
+		padding: 0.5rem;
+	}
+
+	.image-warning {
+		margin: 0 0 0.5rem;
+		padding: 0.45rem 0.55rem;
+		border: 1px solid #cf8d8d;
+		background: #fff1f1;
+		color: #7a2f2f;
+		font-size: 0.74rem;
+		line-height: 1.3;
 	}
 
 	.editor-root {
@@ -791,6 +893,7 @@
 	.image-stage {
 		position: relative !important;
 		display: block !important;
+		width: 100% !important;
 		overflow: hidden;
 		outline: 1px solid rgb(30 43 68 / 16%);
 	}
