@@ -1,17 +1,28 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
 :root {
-	font-family: 'Inter', 'Avenir Next', 'Trebuchet MS', 'Segoe UI', sans-serif;
-	--app-bg: #f4f6f9;
-	--panel-bg: #fcfdff;
-	--panel-border: #d7dee8;
-	--toolbar-bg: #ffffff;
-	--sidebar-bg: #f6f8fc;
-	--canvas-bg: #eef2f8;
-	--brand-dark: #2f4a6e;
-	--brand-mid: #3e5d87;
-	--brand-accent: #2f66c8;
-	--text-primary: #1c2a3d;
-	--text-secondary: #4a5f7b;
-	--text-muted: #6f8098;
+	--background: 0 0% 97%;
+	--foreground: 0 0% 7%;
+	--card: 0 0% 100%;
+	--muted: 0 0% 92%;
+	--muted-foreground: 0 0% 40%;
+	--highlight: 54 100% 50%;
+	--destructive: 0 72% 51%;
+
+	--app-bg: hsl(var(--background));
+	--panel-bg: hsl(var(--card));
+	--panel-border: hsl(var(--foreground));
+	--toolbar-bg: hsl(var(--foreground));
+	--sidebar-bg: hsl(var(--card));
+	--canvas-bg: hsl(0 0% 93%);
+	--brand-dark: hsl(var(--foreground));
+	--brand-mid: hsl(var(--foreground));
+	--brand-accent: hsl(var(--highlight));
+	--text-primary: hsl(var(--foreground));
+	--text-secondary: hsl(var(--muted-foreground));
+	--text-muted: hsl(var(--muted-foreground));
+
+	font-family: 'IBM Plex Mono', 'Courier New', monospace;
 }
 
 * {
@@ -43,7 +54,23 @@ button,
 input,
 select {
 	font: inherit;
+	border-radius: 0;
 }
+
+h1,
+h2,
+h3,
+h4 {
+	font-family: 'Space Grotesk', 'Arial Black', sans-serif;
+	text-transform: uppercase;
+	letter-spacing: -0.02em;
+}
+
+::selection {
+	background: hsl(var(--highlight));
+	color: hsl(var(--foreground));
+}
+
 .g-aiImg {
 	pointer-events: none;
 }

@@ -793,6 +793,9 @@
 		height: 100%;
 		min-height: 0;
 		background: var(--canvas-bg);
+		background-image: linear-gradient(90deg, hsl(0 0% 84%) 1px, transparent 1px),
+			linear-gradient(180deg, hsl(0 0% 84%) 1px, transparent 1px);
+		background-size: 20px 20px;
 	}
 
 	.left-sidebar,
@@ -855,8 +858,8 @@
 
 	.workspace-shell.is-dragover {
 		outline: 2px dashed var(--brand-mid);
-		outline-offset: -6px;
-		background: color-mix(in srgb, var(--canvas-bg) 82%, white 18%);
+		outline-offset: -3px;
+		background: hsl(var(--card));
 	}
 
 	.stage-host {
@@ -1091,7 +1094,7 @@
 
 	@media (min-width: 980px) {
 		.studio {
-			grid-template-columns: 300px minmax(0, 1fr) 200px;
+			grid-template-columns: 300px minmax(0, 1fr) 260px;
 			align-items: stretch;
 		}
 

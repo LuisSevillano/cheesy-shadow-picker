@@ -331,26 +331,28 @@
 		justify-content: center;
 		height: auto;
 		padding: 0.35rem 0.6rem;
-		border: 1px solid var(--brand-mid);
-		background: var(--brand-mid);
-		color: #fff;
+		border: 1px solid var(--panel-border);
+		background: transparent;
+		color: var(--text-primary);
 		font-size: 0.69rem;
 		font-weight: 600;
 		line-height: 1.2;
 		box-sizing: border-box;
-		border-radius: 4px;
+		border-radius: 0;
 		cursor: pointer;
 		text-align: left;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
 	}
 
 	.sample-button {
-		border-color: var(--panel-border);
-		background: transparent;
-		color: var(--text-secondary);
+		background: hsl(var(--foreground));
+		color: hsl(var(--background));
 	}
 
 	.sample-button:hover {
-		background: var(--app-bg);
+		background: hsl(var(--highlight));
+		color: hsl(var(--foreground));
 		filter: none;
 	}
 
@@ -394,8 +396,10 @@
 		border: 1px solid var(--panel-border);
 		background: var(--panel-bg);
 		color: var(--text-primary);
-		border-radius: 4px;
+		border-radius: 0;
 		white-space: nowrap;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
 	}
 
 	.artboard-btn:hover {
@@ -403,9 +407,9 @@
 	}
 
 	.artboard-btn.is-active {
-		background: var(--brand-mid);
-		color: #fff;
-		border-color: var(--brand-mid);
+		background: hsl(var(--foreground));
+		color: hsl(var(--background));
+		border-color: hsl(var(--foreground));
 	}
 
 	.metric {
@@ -590,7 +594,7 @@
 		align-items: center;
 		gap: 0.25rem;
 		border: 1px solid var(--panel-border);
-		background: #fff;
+		background: var(--panel-bg);
 		color: var(--text-secondary);
 		padding: 0.24rem 0.34rem;
 		font-size: 0.64rem;
@@ -598,7 +602,9 @@
 		line-height: 1.2;
 		cursor: pointer;
 		touch-action: manipulation;
-		border-radius: 4px;
+		border-radius: 0;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
 		transition:
 			border-color 120ms ease,
 			color 120ms ease,
@@ -606,18 +612,21 @@
 	}
 
 	.action-row button:first-child {
-		border-color: var(--brand-mid);
-		background: var(--brand-mid);
-		color: #fff;
+		border-color: hsl(var(--foreground));
+		background: hsl(var(--foreground));
+		color: hsl(var(--background));
 	}
 
 	button:hover,
 	.tool-button:hover {
-		background: var(--app-bg);
+		background: hsl(var(--foreground));
+		color: hsl(var(--background));
 	}
 
 	.tool-button:hover {
-		background: var(--brand-dark);
+		background: hsl(var(--highlight));
+		border-color: hsl(var(--highlight));
+		color: hsl(var(--foreground));
 		filter: none;
 	}
 
@@ -639,8 +648,9 @@
 	}
 
 	button.preview-toggle.is-active {
-		border-color: var(--brand-dark);
-		color: var(--brand-dark);
+		border-color: hsl(var(--foreground));
+		background: hsl(var(--foreground));
+		color: hsl(var(--background));
 	}
 
 	.reset-button {

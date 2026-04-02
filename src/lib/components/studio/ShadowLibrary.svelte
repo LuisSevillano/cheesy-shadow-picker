@@ -80,7 +80,7 @@
 		cursor: pointer;
 		text-decoration: none;
 		touch-action: manipulation;
-		border-radius: 4px;
+		border-radius: 0;
 		transition: background-color 120ms ease;
 	}
 
@@ -111,12 +111,15 @@
 	}
 
 	.shadow-choice:hover {
-		background: var(--app-bg);
+		background: hsl(var(--highlight));
+		color: hsl(var(--foreground));
 	}
 
 	.shadow-choice.is-selected {
-		border-left-color: var(--brand-dark);
-		background: #fff;
+		border-left-color: hsl(var(--foreground));
+		background: #ededed;
+		color: hsl(var(--foreground));
+		border-left-width: 3px;
 	}
 
 	.shadow-name {
@@ -129,7 +132,14 @@
 		display: block;
 		font-size: 0.72rem;
 		line-height: 1.2;
-		font-family: 'JetBrains Mono', 'Consolas', monospace;
+		font-family: inherit;
+		color: hsl(0 0% 93%) !important;
+		padding: 0.1rem 0.45rem;
+		width: fit-content;
+	}
+
+	.shadow-choice.is-selected .shadow-preview {
+		border-color: hsl(var(--foreground));
 	}
 
 	.source-wrap {
@@ -139,7 +149,7 @@
 
 	.shadow-source {
 		font-size: 0.65rem;
-		color: #b0b1b3;
+		color: currentColor;
 		text-decoration: underline;
 		text-underline-offset: 2px;
 	}

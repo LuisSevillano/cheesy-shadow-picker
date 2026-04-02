@@ -55,9 +55,9 @@
 		display: flex;
 		align-items: center;
 		gap: 0.65rem;
-		height: 44px;
+		height: 56px;
 		padding: 0 1rem;
-		border-bottom: 1px solid var(--panel-border);
+		border-bottom: 3px solid hsl(var(--highlight));
 		background: var(--toolbar-bg);
 		flex-shrink: 0;
 	}
@@ -72,12 +72,12 @@
 	.brand-mark {
 		display: grid;
 		place-items: center;
-		width: 24px;
-		height: 24px;
-		font-size: 0.72rem;
+		width: 28px;
+		height: 28px;
+		font-size: 0.92rem;
 		font-weight: 800;
-		background: var(--brand-dark);
-		color: #fff;
+		background: hsl(var(--highlight));
+		color: hsl(var(--foreground));
 	}
 
 	.brand-copy {
@@ -92,22 +92,25 @@
 	}
 
 	.kicker {
-		font-size: 0.58rem;
-		letter-spacing: 0.12em;
+		font-size: 0.7rem;
+		letter-spacing: 0.06em;
 		text-transform: uppercase;
-		color: var(--text-muted);
+		color: hsl(var(--background));
+		font-family: 'Space Grotesk', 'Arial Black', sans-serif;
 	}
 
 	.version {
-		font-size: 0.7rem;
+		font-size: 0.74rem;
 		font-weight: 700;
-		color: var(--text-primary);
+		color: hsl(var(--background));
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
 	}
 
 	.top-divider {
 		width: 1px;
-		height: 20px;
-		background: var(--panel-border);
+		height: 24px;
+		background: hsl(0 0% 28%);
 	}
 
 	.studio-shell {
