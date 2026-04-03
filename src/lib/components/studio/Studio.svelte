@@ -3,6 +3,16 @@
 	import shadowsCatalog from '$lib/utils/data';
 	import ShadowLibrary from '$lib/components/studio/ShadowLibrary.svelte';
 	import StudioToolbar from '$lib/components/studio/StudioToolbar.svelte';
+	import StudioWorkspace from '$lib/components/studio/StudioWorkspace.svelte';
+	import { createDragHandlers } from '$lib/components/studio/logic/dragLabels';
+	import {
+		cloneLabels,
+		getAvailableArtboardWidth,
+		isHtmlFile,
+		readImageFileAsDataUrl,
+		readImageNaturalWidth
+	} from '$lib/components/studio/logic/fileImport';
+	import { getShadowForCssRule, upsertCssShadowRule } from '$lib/components/studio/logic/cssSheet';
 	import { mainShadowColorDef, mainTextColorDef } from '$lib/config';
 	import { parseAi2htmlDocument, pickBestArtboard } from '$lib/utils/ai2html';
 	import {
@@ -44,7 +54,6 @@
 	let shadowColor = $state(mainShadowColorDef);
 	let previewOriginal = $state(false);
 
-	let dragState = $state(null);
 	let isDragOver = $state(false);
 	let importedStyleNode = $state();
 	let canUseEyeDropper = $state(false);
@@ -116,38 +125,20 @@
 			imagePreview = '';
 			imageFileName = '';
 
-			const availableWidth = getAvailableArtboardWidth();
+			const availableWidth = getAvailableArtboardWidth(workspaceColumnRef);
 			setArtboard(pickBestArtboard(parsed.artboards, availableWidth) || parsed.artboards[0]);
 		} catch (error) {
 			parseError = error instanceof Error ? error.message : 'Could not read ai2html file.';
 		}
 	}
 
-	function getAvailableArtboardWidth() {
-		if (workspaceColumnRef?.clientWidth) {
-			return workspaceColumnRef.clientWidth;
-		}
-
-		if (typeof window !== 'undefined') {
-			return Math.max(300, window.innerWidth - 24);
-		}
-
-		return 1200;
-	}
-
 	onDestroy(() => {
 		if (typeof document !== 'undefined') {
 			importedStyleNode?.remove();
-			document.body.classList.remove('dragging-labels');
 		}
-	});
 
-	function cloneLabels(list = []) {
-		return list.map((label) => ({
-			...label,
-			styleMap: { ...(label.styleMap || {}) }
-		}));
-	}
+		dragHandlers.cleanupDragState();
+	});
 
 	function updateLabel(labelId, updater) {
 		labels = labels.map((label) => (label.id === labelId ? updater(label) : label));
@@ -199,29 +190,27 @@
 			return;
 		}
 
-		const reader = new FileReader();
-		reader.onload = () => {
-			imagePreview = reader.result;
-			imageFileName = file.name;
-			htmlFileName = '';
-			artboards = [];
-			selectedArtboardId = '';
-			rootId = '';
-			rootClassName = 'ai2html';
-			importCss = '';
-			labels = [];
-			activeLabelId = '';
+		readImageFileAsDataUrl(file)
+			.then(async (imageDataUrl) => {
+				imagePreview = imageDataUrl;
+				imageFileName = file.name;
+				htmlFileName = '';
+				artboards = [];
+				selectedArtboardId = '';
+				rootId = '';
+				rootClassName = 'ai2html';
+				importCss = '';
+				labels = [];
+				activeLabelId = '';
 
-			const imageElement = new Image();
-			imageElement.onload = () => {
-				if (imageElement.naturalWidth && imageElement.naturalHeight) {
-					imageNaturalWidth = imageElement.naturalWidth;
+				const naturalWidth = await readImageNaturalWidth(imageDataUrl);
+				if (naturalWidth) {
+					imageNaturalWidth = naturalWidth;
 				}
-			};
-			imageElement.src = reader.result;
-		};
-
-		reader.readAsDataURL(file);
+			})
+			.catch(() => {
+				imageLoadError = 'Could not read image file.';
+			});
 	}
 
 	function handleDroppedFile(file) {
@@ -234,7 +223,7 @@
 			return;
 		}
 
-		if (file.name.endsWith('.html') || file.type.includes('html') || file.type.includes('text')) {
+		if (isHtmlFile(file)) {
 			loadAi2htmlFile(file);
 		}
 	}
@@ -414,56 +403,17 @@
 		cssClassName = sanitizeCssClassName(event.currentTarget.value || '');
 	}
 
-	function getCurrentLabelShadow() {
-		if (!activeLabelId || typeof document === 'undefined') {
-			return '';
-		}
-
-		const hostNode = document.getElementById(activeLabelId);
-		if (!hostNode) {
-			return '';
-		}
-
-		const textNode = hostNode.querySelector('p, span, div') || hostNode;
-		const computedShadow = getComputedStyle(textNode).textShadow;
-		return computedShadow && computedShadow !== 'none' ? computedShadow : '';
-	}
-
-	function getShadowForCssRule() {
-		if (selectedLabel?.shadow) {
-			return selectedLabel.shadow;
-		}
-
-		const labelShadow = getCurrentLabelShadow();
-		if (labelShadow) {
-			return labelShadow;
-		}
-
-		return activeShadow;
-	}
-
 	function addRuleToSheet() {
 		if (!cssClassNameValid) {
 			return;
 		}
 
-		const shadow = getShadowForCssRule();
+		const shadow = getShadowForCssRule({ selectedLabel, activeLabelId, activeShadow });
 		if (!shadow) {
 			return;
 		}
 
-		const nextRule = {
-			className: cssClassName,
-			shadow
-		};
-
-		const index = cssRules.findIndex((rule) => rule.className === cssClassName);
-		if (index === -1) {
-			cssRules = [...cssRules, nextRule];
-			return;
-		}
-
-		cssRules = cssRules.map((rule, ruleIndex) => (ruleIndex === index ? nextRule : rule));
+		cssRules = upsertCssShadowRule(cssRules, cssClassName, shadow);
 	}
 
 	function clearCssSheet() {
@@ -503,68 +453,19 @@
 		}
 	}
 
-	function startDrag(event, label) {
-		if (!stageRef) {
-			return;
-		}
-
-		event.stopPropagation();
-		selectLabel(label.id);
-
-		const stageRect = stageRef.getBoundingClientRect();
-		const labelRect = event.currentTarget.getBoundingClientRect();
-		const startTopFromLayout = stageRect.height
-			? ((labelRect.top - stageRect.top) / stageRect.height) * 100
-			: 0;
-		const startLeftFromLayout = stageRect.width
-			? ((labelRect.left - stageRect.left) / stageRect.width) * 100
-			: 0;
-		const styleMap = label.styleMap || {};
-		const parsedTop = parseFloat(styleMap.top);
-		const parsedLeft = parseFloat(styleMap.left);
-		dragState = {
-			id: label.id,
-			startX: event.clientX,
-			startY: event.clientY,
-			startTop: Number.isFinite(parsedTop) ? parsedTop : startTopFromLayout,
-			startLeft: Number.isFinite(parsedLeft) ? parsedLeft : startLeftFromLayout,
-			width: stageRect.width,
-			height: stageRect.height
-		};
-
-		document.body.classList.add('dragging-labels');
-		event.currentTarget.setPointerCapture?.(event.pointerId);
-	}
-
-	function handlePointerMove(event) {
-		if (!dragState) {
-			return;
-		}
-
-		const deltaX = ((event.clientX - dragState.startX) / dragState.width) * 100;
-		const deltaY = ((event.clientY - dragState.startY) / dragState.height) * 100;
-
-		const nextTop = Math.min(100, Math.max(0, dragState.startTop + deltaY));
-		const nextLeft = Math.min(100, Math.max(0, dragState.startLeft + deltaX));
-
-		updateLabel(dragState.id, (label) => {
-			const styleMap = { ...(label.styleMap || {}) };
-			styleMap.top = `${nextTop}%`;
-			styleMap.left = `${nextLeft}%`;
-			return { ...label, styleMap };
-		});
-	}
-
-	function handlePointerUp() {
-		dragState = null;
-		document.body.classList.remove('dragging-labels');
-	}
-
-	function handleStagePointerDown(event) {
-		if (!event.target.closest('.draggable-label')) {
+	const dragHandlers = createDragHandlers({
+		getStageRef: () => stageRef,
+		selectLabel,
+		updateLabel,
+		clearActiveLabel: () => {
 			activeLabelId = '';
 		}
-	}
+	});
+
+	const startDrag = dragHandlers.startDrag;
+	const handlePointerMove = dragHandlers.handlePointerMove;
+	const handlePointerUp = dragHandlers.handlePointerUp;
+	const handleStagePointerDown = dragHandlers.handleStagePointerDown;
 
 	function buildLabelStyle(label) {
 		const styleParts = [];
@@ -642,137 +543,30 @@
 		</details>
 	</aside>
 
-	<div
-		class={`workspace-column ${isDragOver ? 'is-dragover' : ''}`}
-		bind:this={workspaceColumnRef}
-		role="region"
-		aria-label="Main workspace drop zone"
-		ondragover={handleWorkspaceDragOver}
-		ondragleave={handleWorkspaceDragLeave}
-		ondrop={handleAi2htmlDrop}
-	>
-		{#if parseError}
-			<p class="error">{parseError}</p>
-		{/if}
-
-		<div
-			class={`workspace-shell ${isDragOver ? 'is-dragover' : ''}`}
-			role="region"
-			aria-label="Workspace drop zone"
-			ondragover={handleWorkspaceDragOver}
-			ondragleave={handleWorkspaceDragLeave}
-			ondrop={handleAi2htmlDrop}
-		>
-			{#if workspaceImage}
-				<div class="workspace-scroll">
-					{#if imageLoadError}
-						<p class="image-warning" role="alert">{imageLoadError}</p>
-					{/if}
-					<div class="stage-host" style={`max-width:${stageWidth}px;`}>
-						<div id={rootId || 'ai2html-root'} class={`${rootClassName || 'ai2html'} editor-root`}>
-							{#if selectedArtboard}
-								<div
-									id={selectedArtboard.id}
-									class={`${selectedArtboard.className || 'g-artboard'} editor-artboard`}
-									style={selectedArtboard.style || ''}
-									bind:this={stageRef}
-									onpointerdown={handleStagePointerDown}
-								>
-									{#if selectedArtboard.paddingStyle}
-										<div style={selectedArtboard.paddingStyle}></div>
-									{:else if imageLoadError}
-										<div
-											style={`padding: 0 0 ${100 / (selectedArtboard.aspectRatio || 1.6)}% 0;`}
-										></div>
-									{/if}
-									<img
-										id={selectedArtboard.imageId}
-										class={selectedArtboard.imageClassName || 'g-aiImg'}
-										src={workspaceImage}
-										alt={selectedArtboard.imageAlt || 'Mapa de fondo'}
-										loading="eager"
-										fetchpriority="high"
-										width={stageWidth}
-										onload={handleImageLoad}
-										onerror={handleImageError}
-									/>
-
-									{#each labels as label (label.id)}
-										<button
-											type="button"
-											id={label.id}
-											class={`draggable-label ${label.className} ${activeLabelId === label.id ? 'is-active' : ''} ${label.textColor ? 'has-custom-text' : ''} ${label.shadow ? 'has-custom-shadow' : ''}`}
-											style={buildLabelStyle(label)}
-											aria-label={`Text ${label.previewText}`}
-											onfocus={() => selectLabel(label.id)}
-											onpointerdown={(event) => startDrag(event, label)}
-										>
-											{@html label.html}
-										</button>
-									{/each}
-								</div>
-							{:else}
-								<div
-									class="workspace-empty"
-									role="region"
-									aria-label="Drop zone for ai2html or image files"
-									ondragover={handleDragOver}
-									ondrop={handleAi2htmlDrop}
-								>
-									<img
-										src={workspaceImage}
-										alt="Editor background"
-										loading="eager"
-										fetchpriority="high"
-										width={stageWidth}
-										onerror={handleImageError}
-									/>
-									{#each labels as label (label.id)}
-										<button
-											type="button"
-											class={`draggable-label ${activeLabelId === label.id ? 'is-active' : ''} ${label.textColor ? 'has-custom-text' : ''} ${label.shadow ? 'has-custom-shadow' : ''}`}
-											style={buildLabelStyle(label)}
-											aria-label={`Text ${label.previewText}`}
-											onfocus={() => selectLabel(label.id)}
-											onpointerdown={(event) => startDrag(event, label)}
-										>
-											{@html label.html}
-										</button>
-									{/each}
-								</div>
-							{/if}
-						</div>
-					</div>
-				</div>
-			{:else}
-				<div
-					class="workspace-empty"
-					role="region"
-					aria-label="Drop zone for ai2html or image files"
-					ondragover={handleDragOver}
-					ondrop={handleAi2htmlDrop}
-				>
-					<svg
-						class="empty-icon"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="1.8"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						aria-hidden="true"
-						focusable="false"
-					>
-						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-						<polyline points="17 8 12 3 7 8"></polyline>
-						<line x1="12" y1="3" x2="12" y2="15"></line>
-					</svg>
-					<p>Drag & drop your ai2html or image file here</p>
-					<p class="empty-hint">or use the buttons in the toolbar</p>
-				</div>
-			{/if}
-		</div>
-	</div>
+	<StudioWorkspace
+		{parseError}
+		{workspaceImage}
+		{isDragOver}
+		{imageLoadError}
+		{selectedArtboard}
+		{rootId}
+		{rootClassName}
+		{labels}
+		{activeLabelId}
+		{stageWidth}
+		{buildLabelStyle}
+		onDragOver={handleDragOver}
+		onWorkspaceDragOver={handleWorkspaceDragOver}
+		onWorkspaceDragLeave={handleWorkspaceDragLeave}
+		onDrop={handleAi2htmlDrop}
+		onStagePointerDown={handleStagePointerDown}
+		onSelectLabel={selectLabel}
+		onStartDrag={startDrag}
+		onImageLoad={handleImageLoad}
+		onImageError={handleImageError}
+		bind:workspaceColumnRef
+		bind:stageRef
+	/>
 
 	<aside class="right-sidebar">
 		<ShadowLibrary
@@ -812,11 +606,6 @@
 		border-right: 1px solid var(--panel-border);
 	}
 
-	.workspace-column.is-dragover,
-	.workspace-column.is-dragover {
-		background: color-mix(in srgb, var(--canvas-bg) 88%, white 12%);
-	}
-
 	.mobile-tools {
 		border: 0;
 	}
@@ -834,147 +623,6 @@
 		background: var(--sidebar-bg);
 		border-left: 1px solid var(--panel-border);
 		min-width: 0;
-	}
-
-	.workspace-column {
-		display: grid;
-		grid-template-rows: auto 1fr;
-		gap: 0;
-		align-content: start;
-		min-width: 0;
-		min-height: 0;
-		overflow: hidden;
-	}
-
-	.workspace-shell {
-		display: flex;
-		flex-direction: column;
-		border: 0;
-		background: transparent;
-		padding: 0;
-		min-height: 0;
-		overflow: auto;
-	}
-
-	.workspace-shell.is-dragover {
-		outline: 2px dashed var(--brand-mid);
-		outline-offset: -3px;
-		background: hsl(var(--card));
-	}
-
-	.stage-host {
-		position: sticky;
-		top: 0;
-		z-index: 1;
-		width: 100%;
-		background: var(--workspace-bg, #f5f5f5);
-		padding: 0;
-		box-sizing: border-box;
-	}
-
-	.workspace-scroll {
-		overflow: auto;
-		height: 100%;
-		padding: 0.5rem;
-	}
-
-	.image-warning {
-		margin: 0 0 0.5rem;
-		padding: 0.45rem 0.55rem;
-		border: 1px solid #cf8d8d;
-		background: #fff1f1;
-		color: #7a2f2f;
-		font-size: 0.74rem;
-		line-height: 1.3;
-	}
-
-	.editor-root {
-		position: relative;
-	}
-
-	.editor-artboard,
-	.image-stage {
-		position: relative !important;
-		display: block !important;
-		width: 100% !important;
-		overflow: hidden;
-		outline: 1px solid rgb(30 43 68 / 16%);
-	}
-
-	.image-stage > img {
-		position: absolute;
-		inset: 0;
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-	}
-
-	.workspace-empty {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		gap: 0.75rem;
-		padding: 2rem 1rem;
-		text-align: center;
-		color: var(--text-muted);
-		background: transparent;
-		min-height: 200px;
-	}
-
-	.workspace-empty .empty-icon {
-		width: 48px;
-		height: 48px;
-		opacity: 0.4;
-	}
-
-	.workspace-empty p {
-		margin: 0;
-		font-size: 0.85rem;
-	}
-
-	.workspace-empty .empty-hint {
-		font-size: 0.75rem;
-		opacity: 0.7;
-	}
-
-	.draggable-label {
-		border: none;
-		background: transparent;
-		padding: 0;
-		cursor: grab;
-		touch-action: none;
-		-webkit-tap-highlight-color: transparent;
-		outline: 1px dashed transparent;
-	}
-
-	.draggable-label:active {
-		cursor: grabbing;
-	}
-
-	.draggable-label.is-active {
-		/* outline-color: rgb(44 96 223 / 25%); */
-	}
-
-	.draggable-label.has-custom-text :global(p) {
-		color: var(--editor-text-color) !important;
-	}
-
-	.draggable-label.has-custom-shadow :global(p) {
-		text-shadow: var(--editor-shadow) !important;
-	}
-
-	.draggable-label:focus-visible {
-		outline: 2px solid var(--brand-accent);
-		outline-offset: 1px;
-	}
-
-	.error {
-		margin: 0.75rem 0.75rem 0;
-		padding: 0.55rem;
-		border: 1px solid #c7a2a2;
-		background: #fff1f1;
-		color: #7d3e3e;
 	}
 
 	@media (max-width: 979px) {
@@ -1043,38 +691,15 @@
 		.right-sidebar {
 			max-height: 180px;
 		}
-
-		.workspace-column {
-			min-height: clamp(140px, 28vh, 280px);
-			order: 0;
-		}
-
-		.workspace-scroll {
-			max-height: 40vh;
-			overflow: auto;
-		}
-
-		.workspace-scroll {
-			padding: 0.5rem;
-		}
-
-		.stage-host {
-			max-width: 100%;
-		}
-
-		.workspace-empty {
-			min-height: 120px;
-			padding: 1rem 0.75rem;
-		}
 	}
 
 	@media (max-width: 600px) {
-		.left-sidebar .toolbar-row {
+		:global(.left-sidebar .toolbar-row) {
 			padding: 0.5rem;
 		}
 
-		.left-sidebar button,
-		.left-sidebar .tool-button {
+		:global(.left-sidebar button),
+		:global(.left-sidebar .tool-button) {
 			min-height: 44px;
 			min-width: 44px;
 			padding: 0.5rem 0.65rem;
@@ -1082,11 +707,11 @@
 			touch-action: manipulation;
 		}
 
-		.left-sidebar .action-row {
+		:global(.left-sidebar .action-row) {
 			flex-direction: column;
 		}
 
-		.left-sidebar .action-row button {
+		:global(.left-sidebar .action-row button) {
 			width: 100%;
 			justify-content: center;
 		}

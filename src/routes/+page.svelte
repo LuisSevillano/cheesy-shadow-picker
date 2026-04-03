@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import Studio from '$lib/components/Studio.svelte';
+	import Studio from '$lib/components/studio/Studio.svelte';
 	import sampleAi2htmlContent from '$lib/components/Ai2htmlSample.html?raw';
 
 	let sampleLoaded = $state(false);
