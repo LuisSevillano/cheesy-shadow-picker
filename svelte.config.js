@@ -8,7 +8,7 @@ const config = {
 		appDir: 'app',
 		adapter: adapter(),
 		paths: {
-			base: process.env.NODE_ENV === 'production' ? '/chessie-shadow-picker' : ''
+			base: process.env.NODE_ENV === 'production' ? '/cheesy-shadow-picker' : ''
 		}
 	}
 };
