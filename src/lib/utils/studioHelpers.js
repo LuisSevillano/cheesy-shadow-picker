@@ -72,6 +72,63 @@ export function recolorShadow(shadow, nextColor) {
 	return nextShadow;
 }
 
+export function invertHexColor(hex = '') {
+	const normalized = normalizeHex(hex);
+	if (!/^#[0-9a-f]{6}$/i.test(normalized)) {
+		return '#000000';
+	}
+
+	const r = (255 - Number.parseInt(normalized.slice(1, 3), 16)).toString(16).padStart(2, '0');
+	const g = (255 - Number.parseInt(normalized.slice(3, 5), 16)).toString(16).padStart(2, '0');
+	const b = (255 - Number.parseInt(normalized.slice(5, 7), 16)).toString(16).padStart(2, '0');
+
+	return `#${r}${g}${b}`;
+}
+
+export function invertShadowColor(shadow = '') {
+	if (!shadow) {
+		return '';
+	}
+
+	const colors = shadow.match(colorTokenRegex);
+	if (!colors?.length) {
+		return shadow;
+	}
+
+	const replacements = colors.map((token) => {
+		if (token.startsWith('#')) {
+			return invertHexColor(token);
+		}
+
+		const values = token.match(/\d+(?:\.\d+)?%?/g) || [];
+		if (values.length < 3) {
+			return token;
+		}
+
+		const channels = values.slice(0, 3).map((value) => {
+			if (value.endsWith('%')) {
+				const percent = Number.parseFloat(value);
+				return `${Math.max(0, Math.min(100, 100 - percent))}%`;
+			}
+
+			const channel = Math.round(Number.parseFloat(value));
+			return String(Math.max(0, Math.min(255, 255 - channel)));
+		});
+
+		const alpha = values[3];
+		return alpha
+			? `rgb(${channels[0]} ${channels[1]} ${channels[2]} / ${alpha})`
+			: `rgb(${channels[0]} ${channels[1]} ${channels[2]})`;
+	});
+
+	let result = shadow;
+	colors.forEach((token, index) => {
+		result = result.replace(token, replacements[index]);
+	});
+
+	return result;
+}
+
 export function normalizeHex(hex = '') {
 	if (!hex) {
 		return '';

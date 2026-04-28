@@ -34,6 +34,7 @@
 		onRecolorSelectedShadow = () => {},
 		onClearSelectedShadow = () => {},
 		onCopyCurrentShadow = () => {},
+		onInvertShadow = () => {},
 		onShadowColorLive = () => {},
 		onPickShadowColor = () => {},
 		onCssClassNameInput = () => {},
@@ -198,6 +199,7 @@
 				<button type="button" onclick={onCopyCurrentShadow} disabled={!activeShadow}
 					>Copy CSS</button
 				>
+				<button type="button" onclick={onInvertShadow}>Invert Shadow</button>
 				<button
 					type="button"
 					class="eyedropper"

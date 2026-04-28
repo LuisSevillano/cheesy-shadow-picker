@@ -133,7 +133,6 @@
 		font-size: 0.72rem;
 		line-height: 1.2;
 		font-family: inherit;
-		color: hsl(0 0% 93%) !important;
 		padding: 0.1rem 0.45rem;
 		width: fit-content;
 	}
