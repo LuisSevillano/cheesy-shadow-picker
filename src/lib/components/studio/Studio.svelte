@@ -258,14 +258,14 @@
 		setArtboard(artboard);
 	}
 
-	function selectMatchingShadow(shadow = '') {
+	function selectMatchingShadow(shadow = '', color = shadowColor) {
 		if (!shadow || shadow === 'none') {
 			return;
 		}
 
 		const signature = normalizeShadowSignature(shadow);
 		const match = shadowsCatalog.find(
-			(item) => normalizeShadowSignature(recolorShadow(item.shadow, shadowColor)) === signature
+			(item) => normalizeShadowSignature(recolorShadow(item.shadow, color)) === signature
 		);
 
 		if (match) {
@@ -296,6 +296,8 @@
 			const derivedShadowColor = extractShadowColor(computedShadow);
 			if (derivedShadowColor) {
 				shadowColor = derivedShadowColor;
+				selectMatchingShadow(computedShadow, derivedShadowColor);
+				return;
 			}
 
 			selectMatchingShadow(computedShadow);
@@ -389,6 +391,40 @@
 				shadow: recolorShadow(label.shadow, shadowColor)
 			};
 		});
+	}
+
+	function invertShadow() {
+		const swapTextAndShadowColors = (label, fallbackTextColor, fallbackShadowColor) => {
+			const sourceShadow = label.shadow || recolorShadow(selectedShadowRaw, fallbackShadowColor);
+			const currentTextColor = label.textColor || fallbackTextColor;
+			const currentShadowColor = extractShadowColor(sourceShadow) || fallbackShadowColor;
+
+			return {
+				...label,
+				textColor: currentShadowColor,
+				shadow: recolorShadow(sourceShadow, currentTextColor)
+			};
+		};
+
+		if (activeLabelId) {
+			const activeLabel = labels.find((label) => label.id === activeLabelId);
+			if (!activeLabel) {
+				return;
+			}
+
+			const nextLabel = swapTextAndShadowColors(activeLabel, textColor, shadowColor);
+			updateLabel(activeLabelId, () => nextLabel);
+			textColor = nextLabel.textColor || textColor;
+			shadowColor = extractShadowColor(nextLabel.shadow) || shadowColor;
+			selectMatchingShadow(nextLabel.shadow, shadowColor);
+			return;
+		}
+
+		labels = labels.map((label) => swapTextAndShadowColors(label, textColor, shadowColor));
+		const nextTextColor = shadowColor;
+		const nextShadowColor = textColor;
+		textColor = nextTextColor;
+		shadowColor = nextShadowColor;
 	}
 
 	async function copyCurrentShadow() {
@@ -532,6 +568,7 @@
 					onRecolorSelectedShadow={recolorSelectedShadow}
 					onClearSelectedShadow={clearSelectedShadow}
 					onCopyCurrentShadow={copyCurrentShadow}
+					onInvertShadow={invertShadow}
 					onShadowColorLive={handleShadowColorLive}
 					onPickShadowColor={() => pickColor('shadow')}
 					onCssClassNameInput={handleCssClassNameInput}
@@ -587,7 +624,8 @@
 		height: 100%;
 		min-height: 0;
 		background: var(--canvas-bg);
-		background-image: linear-gradient(90deg, hsl(0 0% 84%) 1px, transparent 1px),
+		background-image:
+			linear-gradient(90deg, hsl(0 0% 84%) 1px, transparent 1px),
 			linear-gradient(180deg, hsl(0 0% 84%) 1px, transparent 1px);
 		background-size: 20px 20px;
 	}
