@@ -12,6 +12,8 @@
 		labels = [],
 		activeLabelId = '',
 		stageWidth = 1200,
+		imageNaturalWidth = 1200,
+		imageNaturalHeight = 800,
 		buildLabelStyle,
 		onDragOver = () => {},
 		onWorkspaceDragOver = () => {},
@@ -59,6 +61,8 @@
 					{selectedArtboard}
 					{workspaceImage}
 					{stageWidth}
+					{imageNaturalWidth}
+					{imageNaturalHeight}
 					{imageLoadError}
 					{labels}
 					{activeLabelId}

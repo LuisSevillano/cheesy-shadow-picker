@@ -7,18 +7,33 @@ export function createDragHandlers({ getStageRef, selectLabel, updateLabel, clea
 			return;
 		}
 
+		event.preventDefault();
 		event.stopPropagation();
 		selectLabel(label.id);
 
 		const stageRect = stageRef.getBoundingClientRect();
+
+		// Use the first child's dimensions if stage itself has no height (padding-bottom trick)
+		let stageWidth = stageRect.width;
+		let stageHeight = stageRect.height;
+
+		if (!stageHeight && stageRef.firstElementChild) {
+			const childRect = stageRef.firstElementChild.getBoundingClientRect();
+			stageHeight = childRect.height;
+			stageWidth = childRect.width || stageWidth;
+		}
+
+		// If stage has no dimensions yet, don't start drag
+		if (!stageWidth || !stageHeight) {
+			return;
+		}
+
 		const labelRect = event.currentTarget.getBoundingClientRect();
-		const startTopFromLayout = stageRect.height
-			? ((labelRect.top - stageRect.top) / stageRect.height) * 100
-			: 0;
-		const startLeftFromLayout = stageRect.width
-			? ((labelRect.left - stageRect.left) / stageRect.width) * 100
-			: 0;
+		const startTopFromLayout = ((labelRect.top - stageRect.top) / stageHeight) * 100;
+		const startLeftFromLayout = ((labelRect.left - stageRect.left) / stageWidth) * 100;
 		const styleMap = label.styleMap || {};
+
+		// Parse percentage values correctly (e.g., "15%" -> 15)
 		const parsedTop = parseFloat(styleMap.top);
 		const parsedLeft = parseFloat(styleMap.left);
 
@@ -28,8 +43,8 @@ export function createDragHandlers({ getStageRef, selectLabel, updateLabel, clea
 			startY: event.clientY,
 			startTop: Number.isFinite(parsedTop) ? parsedTop : startTopFromLayout,
 			startLeft: Number.isFinite(parsedLeft) ? parsedLeft : startLeftFromLayout,
-			width: stageRect.width,
-			height: stageRect.height
+			width: stageWidth,
+			height: stageHeight
 		};
 
 		document.body.classList.add('dragging-labels');
@@ -37,7 +52,7 @@ export function createDragHandlers({ getStageRef, selectLabel, updateLabel, clea
 	}
 
 	function handlePointerMove(event) {
-		if (!dragState) {
+		if (!dragState || typeof dragState === 'string') {
 			return;
 		}
 
@@ -56,14 +71,24 @@ export function createDragHandlers({ getStageRef, selectLabel, updateLabel, clea
 	}
 
 	function handlePointerUp() {
-		dragState = null;
+		const currentDragState = dragState;
+		dragState = 'dropping';
 		document.body.classList.remove('dragging-labels');
+		setTimeout(() => {
+			if (dragState === 'dropping') {
+				dragState = null;
+			}
+		}, 150);
 	}
 
 	function handleStagePointerDown(event) {
 		if (!event.target.closest('.draggable-label')) {
 			clearActiveLabel();
 		}
+	}
+
+	function isDraggingLabel() {
+		return !!dragState;
 	}
 
 	function cleanupDragState() {
@@ -78,6 +103,7 @@ export function createDragHandlers({ getStageRef, selectLabel, updateLabel, clea
 		handlePointerMove,
 		handlePointerUp,
 		handleStagePointerDown,
-		cleanupDragState
+		cleanupDragState,
+		isDraggingLabel
 	};
 }

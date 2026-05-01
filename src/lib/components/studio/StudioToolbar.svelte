@@ -40,8 +40,11 @@
 		onCssClassNameInput = () => {},
 		onAddRuleToSheet = () => {},
 		onCopyCssSheet = () => {},
-		onClearCssSheet = () => {}
+		onClearCssSheet = () => {},
+		onAddCustomText = () => {}
 	} = $props();
+
+	let customText = $state('');
 
 	function handleDragOver(event) {
 		event.preventDefault();
@@ -83,6 +86,38 @@
 		{#if htmlFileName || imageFileName}
 			<p class="active-file">{htmlFileName || imageFileName}</p>
 		{/if}
+	</div>
+
+	<div class="toolbar-row custom-text-row">
+		<div class="custom-text-input-group">
+			<label for="custom-text-input" class="custom-text-label">Add Text</label>
+			<input
+				id="custom-text-input"
+				type="text"
+				bind:value={customText}
+				placeholder="Your text here"
+				class="custom-text-field"
+				onkeydown={(e) => {
+					if (e.key === 'Enter' && customText.trim()) {
+						onAddCustomText(customText.trim());
+						customText = '';
+					}
+				}}
+			/>
+			<button
+				type="button"
+				class="tool-button add-text-btn"
+				onclick={() => {
+					if (customText.trim()) {
+						onAddCustomText(customText.trim());
+						customText = '';
+					}
+				}}
+				disabled={!customText.trim()}
+			>
+				Add
+			</button>
+		</div>
 	</div>
 
 	<div class="toolbar-row main-controls-row">
@@ -362,6 +397,47 @@
 		font-size: 0.74rem;
 		color: var(--text-secondary);
 		word-break: break-word;
+	}
+
+	.custom-text-row {
+		padding: 0.5rem 0.75rem;
+		border-bottom: 1px solid var(--panel-border);
+	}
+
+	.custom-text-input-group {
+		display: flex;
+		align-items: center;
+		gap: 0.35rem;
+		width: 100%;
+	}
+
+	.custom-text-label {
+		font-size: 0.68rem;
+		font-weight: 600;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		color: var(--text-secondary);
+		white-space: nowrap;
+	}
+
+	.custom-text-field {
+		flex: 1;
+		min-width: 0;
+		padding: 0.3rem 0.4rem;
+		font-size: 0.72rem;
+		border: 1px solid var(--panel-border);
+		background: #fff;
+		color: var(--text-primary);
+	}
+
+	.custom-text-field:focus-visible {
+		outline: 2px solid var(--brand-accent);
+		outline-offset: -1px;
+	}
+
+	.add-text-btn {
+		padding: 0.3rem 0.5rem;
+		font-size: 0.64rem;
 	}
 
 	.main-controls-row {

@@ -7,6 +7,8 @@
 		selectedArtboard,
 		workspaceImage,
 		stageWidth,
+		imageNaturalWidth = 1200,
+		imageNaturalHeight = 800,
 		imageLoadError,
 		labels = [],
 		activeLabelId = '',
@@ -18,6 +20,10 @@
 		onImageError = () => {},
 		stageRef = $bindable()
 	} = $props();
+
+	const imageAspectRatio = $derived(
+		imageNaturalWidth && imageNaturalHeight ? imageNaturalWidth / imageNaturalHeight : 1.6
+	);
 </script>
 
 <div class="stage-host" style={`max-width:${stageWidth}px;`}>
@@ -59,13 +65,20 @@
 				{/each}
 			</div>
 		{:else}
-			<div class="workspace-empty" role="region" aria-label="Drop zone for ai2html or image files">
+			<div
+				class="image-stage"
+				role="presentation"
+				style={`padding: 0 0 ${100 / imageAspectRatio}% 0;`}
+				bind:this={stageRef}
+				onpointerdown={onStagePointerDown}
+			>
 				<img
 					src={workspaceImage}
 					alt="Editor background"
 					loading="eager"
 					fetchpriority="high"
 					width={stageWidth}
+					onload={onImageLoad}
 					onerror={onImageError}
 				/>
 				{#each labels as label (label.id)}
