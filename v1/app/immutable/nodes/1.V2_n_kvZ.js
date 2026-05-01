@@ -1,1 +1,0 @@
-import{a as t,t as r}from"../chunks/DWxj5FO-.js";import"../chunks/Cu02DxNI.js";var s=r('<main class="svelte-1eml3xc"><p>Sorry about that</p> <div class="svelte-1eml3xc"><img class="rotate svelte-1eml3xc" src="/404.jpeg" alt=""></div> <a class="back svelte-1eml3xc" href="../">Volver</a></main>');function m(a){var e=s();t(a,e)}export{m as component};
