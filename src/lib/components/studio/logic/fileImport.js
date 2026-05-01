@@ -54,3 +54,19 @@ export function readImageNaturalWidth(src) {
 		imageElement.src = src;
 	});
 }
+
+export function readImageNaturalHeight(src) {
+	return new Promise((resolve) => {
+		const imageElement = new Image();
+		imageElement.onload = () => {
+			if (imageElement.naturalWidth && imageElement.naturalHeight) {
+				resolve(imageElement.naturalHeight);
+				return;
+			}
+
+			resolve(null);
+		};
+		imageElement.onerror = () => resolve(null);
+		imageElement.src = src;
+	});
+}

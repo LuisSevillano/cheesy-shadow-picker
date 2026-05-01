@@ -11,11 +11,16 @@
 <button
 	type="button"
 	id={label.id}
+	draggable="false"
 	class={`draggable-label ${label.className || ''} ${isActive ? 'is-active' : ''} ${label.textColor ? 'has-custom-text' : ''} ${label.shadow ? 'has-custom-shadow' : ''}`}
 	style={buildLabelStyle(label)}
 	aria-label={`Text ${label.previewText}`}
 	onfocus={() => onSelect(label.id)}
-	onpointerdown={(event) => onStartDrag(event, label)}
+	onpointerdown={(event) => {
+		event.preventDefault();
+		onStartDrag(event, label);
+	}}
+	ondragstart={(event) => event.preventDefault()}
 >
 	{@html label.html}
 </button>

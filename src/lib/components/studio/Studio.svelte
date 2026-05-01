@@ -10,7 +10,8 @@
 		getAvailableArtboardWidth,
 		isHtmlFile,
 		readImageFileAsDataUrl,
-		readImageNaturalWidth
+		readImageNaturalWidth,
+		readImageNaturalHeight
 	} from '$lib/components/studio/logic/fileImport';
 	import { getShadowForCssRule, upsertCssShadowRule } from '$lib/components/studio/logic/cssSheet';
 	import { mainShadowColorDef, mainTextColorDef } from '$lib/config';
@@ -41,6 +42,7 @@
 	let imageFileName = $state('');
 	let imagePreview = $state('');
 	let imageNaturalWidth = $state(1200);
+	let imageNaturalHeight = $state(800);
 	let rootId = $state('');
 	let rootClassName = $state('ai2html');
 
@@ -174,11 +176,20 @@
 	}
 
 	function handleWorkspaceDragOver(event) {
+		if (dragHandlers.isDraggingLabel()) {
+			return;
+		}
+		if (!event.dataTransfer?.types.includes('Files')) {
+			return;
+		}
 		event.preventDefault();
 		isDragOver = true;
 	}
 
 	function handleWorkspaceDragLeave(event) {
+		if (dragHandlers.isDraggingLabel()) {
+			return;
+		}
 		if (event.currentTarget.contains(event.relatedTarget)) {
 			return;
 		}
@@ -204,8 +215,12 @@
 				activeLabelId = '';
 
 				const naturalWidth = await readImageNaturalWidth(imageDataUrl);
+				const naturalHeight = await readImageNaturalHeight(imageDataUrl);
 				if (naturalWidth) {
 					imageNaturalWidth = naturalWidth;
+				}
+				if (naturalHeight) {
+					imageNaturalHeight = naturalHeight;
 				}
 			})
 			.catch(() => {
@@ -229,6 +244,10 @@
 	}
 
 	function handleAi2htmlDrop(event) {
+		if (dragHandlers.isDraggingLabel()) {
+			event.preventDefault();
+			return;
+		}
 		event.preventDefault();
 		isDragOver = false;
 		const [file] = event.dataTransfer.files || [];
@@ -238,6 +257,25 @@
 	function handleImageInput(event) {
 		const [file] = event.currentTarget.files || [];
 		loadImageFile(file);
+	}
+
+	function addCustomText(text) {
+		const newLabel = {
+			id: 'custom-' + Date.now(),
+			className: 'custom-text',
+			html: `<p>${text}</p>`,
+			previewText: text,
+			styleMap: {
+				position: 'absolute',
+				left: '15%',
+				top: '15%'
+			},
+			shadow: '',
+			textColor: ''
+		};
+
+		labels = [...labels, newLabel];
+		activeLabelId = newLabel.id;
 	}
 
 	function handleImageLoad(event) {
@@ -502,6 +540,7 @@
 	const handlePointerMove = dragHandlers.handlePointerMove;
 	const handlePointerUp = dragHandlers.handlePointerUp;
 	const handleStagePointerDown = dragHandlers.handleStagePointerDown;
+	const isDraggingLabel = dragHandlers.isDraggingLabel;
 
 	function buildLabelStyle(label) {
 		const styleParts = [];
@@ -575,6 +614,7 @@
 					onAddRuleToSheet={addRuleToSheet}
 					onCopyCssSheet={copyCssSheet}
 					onClearCssSheet={clearCssSheet}
+					onAddCustomText={addCustomText}
 				/>
 			</div>
 		</details>
@@ -591,6 +631,8 @@
 		{labels}
 		{activeLabelId}
 		{stageWidth}
+		{imageNaturalWidth}
+		{imageNaturalHeight}
 		{buildLabelStyle}
 		onDragOver={handleDragOver}
 		onWorkspaceDragOver={handleWorkspaceDragOver}

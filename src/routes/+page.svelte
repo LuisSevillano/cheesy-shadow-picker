@@ -23,7 +23,9 @@
 			<div class="brand-mark">S</div>
 			<div class="brand-copy">
 				<p class="kicker">Cheesy Shadow Picker</p>
-				<p class="version">2.0</p>
+				<p class="version">
+					2.0 <a href="/cheesy-shadow-picker/v1/" class="v1-link" rel="external">v1 available</a>
+				</p>
 			</div>
 		</div>
 		<div class="top-divider" aria-hidden="true"></div>
@@ -105,6 +107,25 @@
 		color: hsl(var(--background));
 		letter-spacing: 0.16em;
 		text-transform: uppercase;
+		display: flex;
+		align-items: center;
+		gap: 0.4rem;
+	}
+
+	.v1-link {
+		font-size: 0.58rem;
+		font-weight: 500;
+		letter-spacing: 0.03em;
+		color: #fff;
+		text-transform: none;
+		text-decoration: none;
+		opacity: 0.6;
+		transition: opacity 120ms ease;
+	}
+
+	.v1-link:hover {
+		opacity: 1;
+		text-decoration: underline;
 	}
 
 	.top-divider {
